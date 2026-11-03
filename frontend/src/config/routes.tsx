@@ -9,22 +9,26 @@
  */
 import type { ReactElement } from 'react';
 import type { Role } from '../lib/session';
+import { ROLES } from './roles';
 import Home from '../pages/Home';
+import ConnectionPage from '../pages/connection/ConnectionPage';
 import LogPage from '../pages/log/LogPage';
-import VendorPage from '../pages/vendor/VendorPage';
+// @new-page:import
 
 export type AppRoute = { path: string; element: ReactElement; roles?: Role[] };
 
-const ALL_STAFF: Role[] = ['ADMIN', 'STAFF'];
+/** ทุก role ที่ล็อกอินได้ (แก้รายชื่อ role ที่ config/roles.ts) */
+export const ALL_STAFF: Role[] = [...ROLES];
 
 export const routes: AppRoute[] = [
   { path: '/', element: <Home /> },
 
-  { path: '/vendor/*', element: <VendorPage />, roles: ALL_STAFF }, // ตัวอย่าง: ตาราง + ฟอร์ม CRUD
-  { path: '/log/*', element: <LogPage />, roles: ['ADMIN'] }, // ตัวอย่าง: หน้าอ่านอย่างเดียว
+  { path: '/log/*', element: <LogPage />, roles: ['ADMIN'] }, // หน้าของระบบ: บันทึกการใช้งาน
+  { path: '/connection/*', element: <ConnectionPage />, roles: ['ADMIN'] }, // หน้าของระบบ: สถานะการเชื่อมต่อ
+  // @new-page:route
 ];
 
-/** role นี้เข้าหน้าของเมนู path นี้ได้ไหม (ใช้กรองเมนู) — เมนู '/vendor' เทียบกับ route '/vendor/*' */
+/** role นี้เข้าหน้าของเมนู path นี้ได้ไหม (ใช้กรองเมนู) — เมนู '/log' เทียบกับ route '/log/*' */
 export function canAccess(menuPath: string, role: Role | undefined): boolean {
   const route = routes.find((r) => r.path.replace(/\/\*$/, '') === menuPath);
   if (!route) return true;

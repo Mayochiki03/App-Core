@@ -10,7 +10,7 @@ import { auditMiddleware } from './core/audit';
 import { authRouter, requireAuth, requireRole } from './core/auth';
 import { config } from './core/config';
 import { fromZod, HttpError, notFound, ok } from './core/http';
-import { pages } from './pages';
+import { allPages } from './core/registry';
 
 export function createApp() {
   const app = express();
@@ -27,7 +27,7 @@ export function createApp() {
   api.use('/auth', authRouter);
 
   // ลงทะเบียนทุกหน้าจาก src/pages/index.ts → /api/<name>  (ต้องล็อกอิน + ตรวจ role)
-  for (const page of pages) {
+  for (const page of allPages()) {
     api.use(`/${page.name}`, requireAuth, requireRole(...(page.roles ?? [])), page.router);
   }
 

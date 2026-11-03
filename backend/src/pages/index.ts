@@ -1,13 +1,16 @@
 /**
  * pages/index.ts — รายชื่อ "หน้า" ทั้งหมดของระบบฝั่งหลังบ้าน (เขียนมือ ไม่มีการค้นไฟล์อัตโนมัติ)
  *
- * เพิ่มหน้าใหม่ = 1) ก๊อปโฟลเดอร์หน้าตัวอย่าง (เช่น vendor) แล้วเปลี่ยนชื่อ  2) import แล้วต่อท้ายรายการด้านล่าง
+ * เพิ่มหน้าใหม่: npm run new:page <ชื่อ>  (สร้างไฟล์ + ต่อบรรทัดที่มี @new-page ด้านล่างให้เอง)
+ * หรือทำมือ: ก๊อป src/examples/vendor มาเป็น src/pages/<ชื่อ> แล้ว import + ต่อท้ายรายการ (ดู docs/03)
  */
 import type { PageDef } from '../core/pages';
+import { connectionPage } from './connection';
 import { logPage } from './log';
-import { vendorPage } from './vendor';
+// @new-page:import
 
 export const pages: PageDef[] = [
-  vendorPage, // ตัวอย่าง: ตาราง + ฟอร์ม CRUD
-  logPage, // ตัวอย่าง: หน้าอ่านอย่างเดียว (ดู audit log)
+  logPage, // หน้าของระบบ: ดูบันทึกการใช้งาน (audit log) — เก็บไว้ทุกโปรเจกต์
+  connectionPage, // หน้าของระบบ: สถานะการเชื่อมต่อ (ตัวเชื่อมต่อ/ฐานข้อมูลภายนอก)
+  // @new-page:list
 ];

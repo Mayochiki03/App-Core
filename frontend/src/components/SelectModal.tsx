@@ -2,7 +2,7 @@
  * components/SelectModal.tsx — modal "เลือกรายการจากตาราง": ช่องค้นหา + ตารางมี checkbox + แบ่งหน้า + ปุ่ม ยกเลิก/ยืนยัน
  * ใช้เมื่ออยากให้ผู้ใช้ "เลือกค่า" จากรายการยาว ๆ (เช่น เลือกคู่ค้า เลือกผู้ใช้) แทนช่อง dropdown
  *
- * ห่อเป็น modal ของหน้าตัวเองไว้ในโฟลเดอร์ modal/ ของหน้านั้น (ดูตัวอย่าง pages/vendor/modal/VendorPickModal.tsx):
+ * ห่อเป็น modal ของหน้าตัวเองไว้ในโฟลเดอร์ modal/ ของหน้านั้น (ดูตัวอย่าง examples/vendor/modal/VendorPickModal.tsx):
  *
  *   <SelectModal open={open} onClose={...} title="เลือกคู่ค้า" columns={...} rowKey={(r) => r.id}
  *                fetcher={(p) => vendorApi.search({ ...p, category: '' })} onConfirm={(rows) => ...} />

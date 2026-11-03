@@ -3,7 +3,7 @@
  * ต้องอยู่ภายใน <FormProvider> — VendorAdd / VendorEdit เป็นคนครอบให้
  * mode="edit" ใช้ล็อกช่องที่ห้ามแก้ตอนแก้ไข (ตัวอย่าง: ล็อกรหัส)
  */
-import { CATEGORY_OPTIONS } from '../../api/vendorApi';
+import { CATEGORY_OPTIONS } from './vendorApi';
 import { RadioField, SelectField, TextAreaField, TextField } from '../../components/Fields';
 
 type Props = { mode: 'add' | 'edit' };

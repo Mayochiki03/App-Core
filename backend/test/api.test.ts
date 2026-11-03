@@ -13,6 +13,11 @@ import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, it } from 'node:test';
 
+// หน้าตัวอย่าง (src/examples) ไม่ได้ลงทะเบียนในระบบ — เทสต์เพิ่มเข้ามาชั่วคราวเพื่อพิสูจน์ว่าต้นแบบยังใช้ได้จริง
+const { useExtraPages } = await import('../src/core/registry');
+const { vendorPage } = await import('../src/examples/vendor');
+useExtraPages([vendorPage]);
+
 const { createApp } = await import('../src/app');
 const { ensureAdmin } = await import('../src/core/auth');
 const { config } = await import('../src/core/config');

@@ -2,7 +2,7 @@
  * VendorPickModal — modal "เลือกคู่ค้าจากรายการ" ของหน้า vendor (ตัวอย่างการใช้ SelectModal)
  * modal ของหน้านี้ทั้งหมดอยู่ในโฟลเดอร์ modal/ — หน้าอื่นที่อยากได้ modal แบบนี้ให้ก๊อปไฟล์นี้ไปแก้
  */
-import { vendorApi, categoryLabel, type Vendor } from '../../../api/vendorApi';
+import { vendorApi, categoryLabel, type Vendor } from '../vendorApi';
 import type { Column } from '../../../components/DataTable';
 import { SelectModal } from '../../../components/SelectModal';
 

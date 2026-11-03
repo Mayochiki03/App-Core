@@ -10,8 +10,9 @@
 import type { Knex } from 'knex';
 import type { Router } from 'express';
 
-export type Role = 'ADMIN' | 'STAFF';
-export const ROLES: Role[] = ['ADMIN', 'STAFF'];
+// รายชื่อ role แก้ที่ src/roles.ts (ไม่ต้องแก้ไฟล์นี้)
+export { ROLES, type Role } from '../roles';
+import type { Role } from '../roles';
 
 export type Migration = {
   /** ชื่อไม่ซ้ำ + เรียงตามวันที่ เช่น '20260105_vendor' */

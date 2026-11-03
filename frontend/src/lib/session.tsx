@@ -5,7 +5,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api, onSessionExpired, type ApiResult } from '../api/client';
 
-export type Role = 'ADMIN' | 'STAFF';
+export type { Role } from '../config/roles';
+import type { Role } from '../config/roles';
 export type User = { id: number; username: string; full_name: string; role: Role };
 type AppInfo = { name: string; theme: string };
 

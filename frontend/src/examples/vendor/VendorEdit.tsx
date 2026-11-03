@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Navigate, useLocation, useNavigate } from 'react-router';
-import { vendorApi, type VendorInput } from '../../api/vendorApi';
+import { vendorApi, type VendorInput } from './vendorApi';
 import { Button } from '../../components/Button';
 import { PageCard, PageTitle } from '../../components/PageCard';
 import { usePopup } from '../../components/Popup';

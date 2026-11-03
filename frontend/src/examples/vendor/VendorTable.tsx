@@ -6,7 +6,7 @@
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { CATEGORY_OPTIONS, categoryLabel, vendorApi, type Vendor } from '../../api/vendorApi';
+import { CATEGORY_OPTIONS, categoryLabel, vendorApi, type Vendor } from './vendorApi';
 import { Button } from '../../components/Button';
 import { DataTable, type Column } from '../../components/DataTable';
 import { FilterInput, FilterSelect, PickerInput } from '../../components/Fields';

@@ -12,12 +12,18 @@ export const menu: MenuGroup[] = [
   {
     label: 'ข้อมูลหลัก',
     icon: Database,
-    children: [{ label: 'คู่ค้า (Vendor)', path: '/vendor' }],
+    // กลุ่มว่างจะถูกซ่อนเอง — npm run new:page ต่อรายการหน้าใหม่ที่บรรทัด @new-page ด้านล่าง
+    children: [
+      // @new-page:menu
+    ],
   },
   {
     label: 'ระบบ',
     icon: Settings,
-    children: [{ label: 'บันทึกการใช้งาน', path: '/log' }],
+    children: [
+      { label: 'บันทึกการใช้งาน', path: '/log' },
+      { label: 'สถานะการเชื่อมต่อ', path: '/connection' },
+    ],
   },
 ];
 

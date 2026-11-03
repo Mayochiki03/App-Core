@@ -2,16 +2,16 @@
  * core/migrate.ts — สร้าง/อัปเดตตารางในฐานข้อมูล
  *
  * migration ของแกนกลางอยู่ที่ core/migrations.ts ส่วนของแต่ละหน้าอยู่ในโฟลเดอร์หน้านั้น
- * (รายการทั้งหมดรวมจาก src/pages/index.ts — ไม่ต้องสร้างโฟลเดอร์ migration แยก)
+ * (รายการทั้งหมดรวมจาก src/pages/index.ts ผ่าน core/registry.ts — ไม่ต้องสร้างโฟลเดอร์ migration แยก)
  */
 import type { Knex } from 'knex';
 import { db } from './db';
 import { coreMigrations } from './migrations';
 import type { Migration } from './pages';
-import { pages } from '../pages';
+import { allPages } from './registry';
 
 export function allMigrations(): Migration[] {
-  const list = [...coreMigrations, ...pages.flatMap((p) => p.migrations ?? [])];
+  const list = [...coreMigrations, ...allPages().flatMap((p) => p.migrations ?? [])];
   const names = list.map((m) => m.name);
   const dup = names.find((n, i) => names.indexOf(n) !== i);
   if (dup) throw new Error(`ชื่อ migration ซ้ำ: ${dup}`);

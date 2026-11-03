@@ -27,11 +27,24 @@ npm run dev
 
 ## โครงสร้าง (อ่านสั้น ๆ)
 
+ของใน repo มี 4 ชนิด — **ลอกเฉพาะที่ต้องใช้ ไม่ลอกทั้งชุด** (กติกาเต็มอยู่ที่ [AGENTS.md](AGENTS.md))
+
+| ชนิด | คืออะไร |
+|---|---|
+| แกน | `core/`, component กลาง, login, audit, หน้า `log` และ `connection` — ทุกระบบมี ไม่ต้องแก้ |
+| ตัวอย่าง | `examples/vendor` — ไว้ลอกเป็นหน้าใหม่ **ไม่ได้ลงทะเบียนในระบบ** (โปรเจกต์ใหม่จึงไม่มีตาราง/เมนูคู่ค้า) |
+| ตัวเชื่อมต่อ | `integrations/` (เช่น LLM) และ `readonlyDb` (ฐานข้อมูลของระบบอื่น เช่น HOSxP) — เลือกใช้เฉพาะที่โปรเจกต์ต้องใช้ |
+| ของโปรเจกต์ | `pages/`, `api/*Api.ts`, `roles.ts` — ที่ทีมเขียนเอง |
+
 ```
 backend/src/
-  core/                      ตัวกลาง: config, db, auth, audit, http (ปกติไม่ต้องแก้)
+  core/                      แกน: config, db, datasource (อ่านอย่างเดียว), auth, audit, http, migrate (ปกติไม่ต้องแก้)
+  roles.ts                   รายชื่อ role ของระบบ (เพิ่ม role ที่นี่ ไม่ต้องแตะ core/)
   pages/                     ← ที่ทีมทำงาน: 1 โฟลเดอร์ = 1 หน้า แยกเป็นชั้นแบบ Spring Boot
-    vendor/                  (ตัวอย่าง CRUD)
+    log/  connection/        หน้าของระบบ (บันทึกการใช้งาน, สถานะการเชื่อมต่อ)
+    index.ts                 รายชื่อหน้าทั้งหมด (เขียนมือ)
+  integrations/              ตัวเชื่อมต่อกับระบบข้างนอก (llm/ ...) — กติกาใน integrations/README.md
+  examples/vendor/           ต้นแบบ CRUD แยกเป็นชั้น (ไม่ได้ลงทะเบียนในระบบ ยังถูกตรวจและทดสอบทุกครั้ง)
       Vendor.ts              Entity (หน้าตาข้อมูล)
       VendorDto.ts           ข้อมูลที่รับเข้า + กติกาตรวจ
       VendorController.ts    รับ request / ส่ง response
@@ -39,22 +52,17 @@ backend/src/
       VendorRepository.ts    คุยกับฐานข้อมูล
       VendorMigration.ts     สร้างตาราง
       index.ts               ประกอบชั้นเข้าด้วยกัน + ลงทะเบียนหน้า
-    log/                     (ตัวอย่างอ่านอย่างเดียว)
-    index.ts                 รายชื่อหน้าทั้งหมด (เขียนมือ)
 frontend/src/
-  api/                       ไฟล์เรียก API: client.ts (กลาง) + vendorApi.ts, logApi.ts ...
+  api/                       ไฟล์เรียก API: client.ts (กลาง) + <ชื่อ>Api.ts ของแต่ละหน้า
   components/                ชุด component กลาง: Button, PageCard, Fields, DataTable, Pagination, Popup, SelectModal
     layout/                  Layout, Header, Sidebar (ออกจากระบบอยู่มุมซ้ายล่าง), Footer
   hooks/                     useTableData (โหลด+แบ่งหน้า+กรอง)
-  config/                    routes.tsx (1 ฟีเจอร์ = 1 บรรทัด) และ menu.ts (เมนูซ้าย) — เขียนมือ
-  pages/                     ← ที่ทีมทำงาน
-    vendor/
-      VendorPage.tsx         หน้าหลักของฟีเจอร์ ถือ route ย่อย (list / add / edit)
-      VendorTable.tsx        กรอง + ตาราง (รายการ)
-      VendorAdd.tsx  VendorEdit.tsx  VendorForm.tsx
-      modal/                 modal ของหน้านี้ (เช่น VendorPickModal เลือกจากตาราง)
-    log/
+  config/                    routes.tsx (1 ฟีเจอร์ = 1 บรรทัด), menu.ts (เมนูซ้าย), roles.ts — เขียนมือ
+  pages/                     ← ที่ทีมทำงาน: log/ connection/ + หน้าของระบบที่สร้างขึ้น
+  examples/vendor/           ต้นแบบหน้า CRUD: VendorPage / Table / Add / Edit / Form / modal/ + vendorApi.ts
 ```
+
+สร้างหน้าใหม่: `npm run new:page product -- --label สินค้า` (ก๊อปต้นแบบ + เปลี่ยนชื่อ + ต่อรายการลงทะเบียนให้ แล้วแก้ฟิลด์ — ดู [docs/03](docs/03-ทำหน้าใหม่.md))
 
 **กติกาความปลอดภัย:** ไม่ส่ง id หรือข้อมูลใด ๆ ทาง URL (path / query) — ทุก API เป็น POST ส่งข้อมูลใน body และหน้าแก้ไขรับ id ผ่าน state ของ router
 
@@ -67,6 +75,7 @@ frontend/src/
 | [docs/03-ทำหน้าใหม่.md](docs/03-ทำหน้าใหม่.md) | ก๊อปหน้าตัวอย่างเป็นหน้าใหม่ทีละขั้น |
 | [docs/04-typescript-ที่ต้องรู้.md](docs/04-typescript-ที่ต้องรู้.md) | TS ที่ต้องรู้ในโปรเจกต์นี้ (5 เรื่อง) |
 | [docs/05-เทียบกับ-spring-boot.md](docs/05-เทียบกับ-spring-boot.md) | สำหรับคนมาจาก Spring Boot: อะไรตรงกับอะไร |
+| [docs/06-ตัวเชื่อมต่อและฐานข้อมูลภายนอก.md](docs/06-ตัวเชื่อมต่อและฐานข้อมูลภายนอก.md) | ต่อ LLM / LINE / ฐานข้อมูลของระบบอื่น (HOSxP) แบบอ่านอย่างเดียว |
 
 ## คำสั่งที่ใช้บ่อย
 
@@ -76,12 +85,15 @@ frontend/src/
 | `npm run check` | ตรวจ TypeScript ทั้งสองฝั่ง (ควรรันก่อน commit) |
 | `npm test` | ทดสอบ API (ใช้ฐานข้อมูล `app_core_test` ที่ `init.sql` สร้างไว้ — ไม่แตะข้อมูลจริง) |
 | `npm run build` / `npm start` | build หน้าเว็บ / รันแบบ production (หลังบ้านเสิร์ฟหน้าเว็บให้) |
+| `npm run new:page <ชื่อ> -- --label <ชื่อไทย>` | สร้างหน้าใหม่จากต้นแบบ (ทั้งหลังบ้านและหน้าเว็บ + ต่อรายการลงทะเบียน) |
 | `npm run migrate` / `migrate:status` | สร้าง/ดูสถานะตาราง |
 | `npm run db:reset -- --yes` | ลบข้อมูลทั้งหมดแล้วสร้างตารางใหม่ (ต้องใส่ `--yes` เอง) |
 
 ## สิ่งที่ยังไม่ได้ทำ / ข้อควรรู้ (พูดตรง ๆ)
 
-- ขั้นนี้มีหน้าตัวอย่าง 2 แบบ: **CRUD (vendor)** และ **อ่านอย่างเดียว (log)** — ตัวอย่าง Scheduler, หน้า Logic เฉพาะ, Dashboard และคำสั่งก๊อปหน้าอัตโนมัติ (`copy:page`) อยู่ในขั้นถัดไป
+- ต้นแบบมี 1 แบบ: **CRUD (`examples/vendor`)** และหน้าของระบบที่ใช้เป็นแบบอ่านอย่างเดียวได้ (`pages/log`) — ตัวอย่าง Scheduler, หน้า Logic เฉพาะ, Dashboard อยู่ในขั้นถัดไป
+- ตัวเชื่อมต่อที่มีให้ตอนนี้: LLM (OpenAI-compatible) ตัวเดียว · LINE / MOPH Notify / Core Backend ยังไม่อยู่ในตัวกลาง (เพิ่มตามรูปแบบเดียวกับ `llm/` เมื่อมีระบบที่ใช้จริง)
+- ทดสอบ READ ONLY ของ `readonlyDb` กับ MariaDB แล้ว (PostgreSQL ยังไม่ได้ทดสอบ)
 - ทดสอบแล้วกับ MariaDB 10.11 และ PostgreSQL 16 (เทสต์ 13 ข้อผ่าน) — **MySQL 8 และ `docker-compose.yml` ยังไม่ได้ทดสอบจริง** (เครื่องที่ผมใช้ทดสอบไม่มี Docker)
 - โฟลเดอร์ `database/` ขึ้น GitHub เฉพาะ `init.sql`, `docker-compose.yml`, `README.md` — ไฟล์สำรองและข้อมูลถูก `.gitignore` กันไว้
 - ยังไม่มีหน้าจัดการผู้ใช้ (เพิ่มผู้ใช้ตอนนี้ทำผ่านฐานข้อมูล/seed) และยังไม่มีหน้าเปลี่ยนรหัสผ่าน (มี API แล้ว: `POST /api/auth/change-password`)

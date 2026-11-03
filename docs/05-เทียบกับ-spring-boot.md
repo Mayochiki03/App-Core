@@ -4,12 +4,12 @@
 
 | Spring Boot | ในโปรเจกต์นี้ | อยู่ที่ไหน |
 |---|---|---|
-| `@RestController` | Controller (Express router) | `pages/vendor/VendorController.ts` |
+| `@RestController` | Controller (Express router) | `examples/vendor/VendorController.ts` |
 | `@Service` | Service | `VendorService.ts` |
 | `JpaRepository` / DAO | Repository (knex query builder) | `VendorRepository.ts` |
 | `@Entity` | Entity (type) | `Vendor.ts` |
 | DTO + `@Valid` | Dto (zod) | `VendorDto.ts` |
-| `@Autowired` / constructor injection | ต่อสายด้วยมือใน `index.ts` (`new Controller(new Service(new Repository()))`) | `pages/vendor/index.ts` |
+| `@Autowired` / constructor injection | ต่อสายด้วยมือใน `index.ts` (`new Controller(new Service(new Repository()))`) | `examples/vendor/index.ts` |
 | `@ControllerAdvice` | ตัวจัดการ error กลาง | `backend/src/app.ts` |
 | Flyway / Liquibase | Migration (knex) | `VendorMigration.ts` |
 | `application.yml` | `.env` | ที่โฟลเดอร์นอกสุด |

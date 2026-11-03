@@ -39,7 +39,7 @@ export default function LogTable() {
       <PageCard className="mb-4">
         <div className="grid gap-3 md:grid-cols-3">
           <FilterInput label="ค้นหา ผู้ใช้ / path" value={table.draft.q} onChange={(v) => table.setDraft('q', v)} onEnter={table.search} />
-          <FilterInput label="หน้า (เช่น vendor, auth)" value={table.draft.page} onChange={(v) => table.setDraft('page', v)} onEnter={table.search} />
+          <FilterInput label="หน้า (เช่น auth, connection)" value={table.draft.page} onChange={(v) => table.setDraft('page', v)} onEnter={table.search} />
           <FilterSelect label="การกระทำ" value={table.draft.action} onChange={(v) => table.setDraft('action', v)} options={ACTIONS} />
         </div>
         <div className="mt-3 flex justify-center gap-2">

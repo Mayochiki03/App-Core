@@ -15,7 +15,7 @@ export const coreMigrations: Migration[] = [
         t.string('username', 60).notNullable().unique();
         t.string('password_hash', 100).notNullable();
         t.string('full_name', 120).notNullable();
-        t.string('role', 20).notNullable(); // ADMIN | STAFF  (เพิ่ม role ที่ core/pages.ts)
+        t.string('role', 20).notNullable(); // ADMIN | STAFF ... (รายชื่อ role แก้ที่ src/roles.ts)
         t.boolean('is_active').notNullable().defaultTo(true);
         t.string('created_at', 30).notNullable();
         t.string('updated_at', 30).notNullable();
