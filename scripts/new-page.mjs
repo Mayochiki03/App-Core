@@ -40,12 +40,22 @@ const Pascal = name[0].toUpperCase() + name.slice(1);
 const FromPascal = from[0].toUpperCase() + from.slice(1);
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 
-const be = { src: path.join(ROOT, 'backend/src/examples', from), dst: path.join(ROOT, 'backend/src/pages', name) };
+// หลังบ้านแยกตามชั้น (Layer) ก่อน แล้วค่อยแยกตามชื่อหน้า: <layer>/<หน้า>/<หน้า>_<layer>.ts
+const LAYERS = ['entity', 'dto', 'controller', 'service', 'repository'];
+const beEx = path.join(ROOT, 'backend/src/examples');
+const beSrc = path.join(ROOT, 'backend/src');
+const be = {
+  dirs: LAYERS.map((l) => [path.join(beEx, l, from), path.join(beSrc, l, name)]), // โฟลเดอร์ของแต่ละชั้น
+  files: [
+    [path.join(beEx, 'pages', `${from}.ts`), path.join(beSrc, 'pages', `${name}.ts`)], // ไฟล์ประกอบหน้า + ลงทะเบียน
+    [path.join(beEx, 'migration', `${from}_migration.ts`), path.join(beSrc, 'migration', `${name}_migration.ts`)],
+  ],
+};
 const fe = { src: path.join(ROOT, 'frontend/src/examples', from), dst: path.join(ROOT, 'frontend/src/pages', name) };
 const apiDst = path.join(ROOT, 'frontend/src/api', `${name}Api.ts`);
 
-if (!fs.existsSync(be.src) || !fs.existsSync(fe.src)) die(`ไม่พบต้นแบบ "${from}" ใน backend/src/examples และ frontend/src/examples`);
-for (const p of [be.dst, fe.dst, apiDst]) if (fs.existsSync(p)) die(`มีอยู่แล้ว: ${path.relative(ROOT, p)} (ไม่เขียนทับ)`);
+if (![...be.dirs.map((d) => d[0]), ...be.files.map((f) => f[0])].every((p) => fs.existsSync(p)) || !fs.existsSync(fe.src)) die(`ไม่พบต้นแบบ "${from}" ใน backend/src/examples และ frontend/src/examples`);
+for (const p of [...be.dirs.map((d) => d[1]), ...be.files.map((f) => f[1]), fe.dst, apiDst]) if (fs.existsSync(p)) die(`มีอยู่แล้ว: ${path.relative(ROOT, p)} (ไม่เขียนทับ)`);
 
 // ---------- เปลี่ยนชื่อในเนื้อไฟล์ ----------
 const rename = (s) =>
@@ -62,9 +72,14 @@ function listFiles(dir) {
 
 /** สร้างรายการ [ปลายทาง, เนื้อหา] ในหน่วยความจำก่อน — ถ้าอะไรพลาดจะไม่เหลือไฟล์ครึ่งๆ กลางๆ */
 const out = [];
-for (const rel of listFiles(be.src)) {
-  if (rel.endsWith('README.md')) continue;
-  out.push([path.join(be.dst, rename(rel)), rename(fs.readFileSync(path.join(be.src, rel), 'utf8'))]);
+// ต้นแบบอยู่ลึกกว่าของจริง 1 ระดับ (src/examples/...) จึงต้องลดเลข ../ ของ import แกน (core) ลง 1 ระดับ
+for (const [srcDir, dstDir] of be.dirs) {
+  for (const rel of listFiles(srcDir)) {
+    out.push([path.join(dstDir, rename(rel)), rename(fs.readFileSync(path.join(srcDir, rel), 'utf8')).replaceAll("'../../../core", "'../../core").replaceAll("'../../../integrations", "'../../integrations")]);
+  }
+}
+for (const [srcFile, dstFile] of be.files) {
+  out.push([dstFile, rename(fs.readFileSync(srcFile, 'utf8')).replaceAll("'../../core", "'../core")]);
 }
 for (const rel of listFiles(fe.src)) {
   if (rel.endsWith('README.md')) continue;
@@ -74,7 +89,7 @@ for (const rel of listFiles(fe.src)) {
     text = text
       .replace("'../../api/client'", "'./client'")
       .replace(`examples/${from}/${from}Api.ts`, `api/${name}Api.ts`)
-      .replace(`backend/src/examples/${from}/`, `backend/src/pages/${name}/`);
+      .replace('ไฟล์ vendor ในแต่ละชั้นของ backend/src/examples/', `ไฟล์ ${name} ในแต่ละชั้นของ backend/src/`);
     out.push([apiDst, rename(text)]);
     continue;
   }
@@ -112,7 +127,7 @@ for (const [file] of out) console.log('  + ' + path.relative(ROOT, file));
 console.log('  ~ backend/src/pages/index.ts, frontend/src/config/routes.tsx, frontend/src/config/menu.ts (ต่อรายการให้แล้ว)');
 console.log(`
 ขั้นต่อไป (ไล่จากข้อมูลออกมาหน้าจอ):
-  1. แก้ฟิลด์ให้ตรงกับข้อมูลจริง: ${Pascal}.ts, ${Pascal}Dto.ts, ${Pascal}Migration.ts, ${Pascal}Form.tsx, ${Pascal}Table.tsx, api/${name}Api.ts
+  1. แก้ฟิลด์ให้ตรงกับข้อมูลจริง: entity/${name}/${name}_entity.ts, dto/${name}/${name}_dto.ts, migration/${name}_migration.ts, ${Pascal}Form.tsx, ${Pascal}Table.tsx, api/${name}Api.ts
   2. npm run check   (ตรวจ TypeScript)
   3. npm run dev     แล้วเปิดเมนู "${label}"
 `);

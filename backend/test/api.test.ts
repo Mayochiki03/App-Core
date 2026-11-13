@@ -15,7 +15,7 @@ import { after, before, describe, it } from 'node:test';
 
 // หน้าตัวอย่าง (src/examples) ไม่ได้ลงทะเบียนในระบบ — เทสต์เพิ่มเข้ามาชั่วคราวเพื่อพิสูจน์ว่าต้นแบบยังใช้ได้จริง
 const { useExtraPages } = await import('../src/core/registry');
-const { vendorPage } = await import('../src/examples/vendor');
+const { vendorPage } = await import('../src/examples/pages/vendor');
 useExtraPages([vendorPage]);
 
 const { createApp } = await import('../src/app');

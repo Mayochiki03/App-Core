@@ -16,7 +16,7 @@ const { db, closeDb } = await import('../src/core/db');
 const ds = await import('../src/core/datasource');
 const { LlmClient } = await import('../src/integrations/llm/LlmClient');
 const { allIntegrations } = await import('../src/integrations');
-const { ConnectionService } = await import('../src/pages/connection/ConnectionService');
+const { ConnectionService } = await import('../src/service/connection/connection_service');
 
 const setEnv = (kv: Record<string, string | undefined>) => {
   for (const [k, v] of Object.entries(kv)) {

@@ -1,5 +1,5 @@
 /**
- * Vendor.ts — Entity: หน้าตาของข้อมูล "คู่ค้า" หนึ่งแถวในฐานข้อมูล (เทียบ @Entity ของ Spring)
+ * vendor_entity.ts — Entity: หน้าตาของข้อมูล "คู่ค้า" หนึ่งแถวในฐานข้อมูล (เทียบ @Entity ของ Spring)
  */
 export const CATEGORIES = ['BANK', 'HOSPITAL', 'OTHER'] as const;
 export type VendorCategory = (typeof CATEGORIES)[number];

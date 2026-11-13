@@ -1,6 +1,6 @@
 /**
  * examples/vendor/vendorApi.ts — เรียก API ของหน้า vendor ทั้งหมดไว้ที่เดียว (ชนิดข้อมูล + ฟังก์ชัน)
- * เปลี่ยน endpoint / ชื่อฟิลด์ที่ไฟล์นี้ + ฝั่ง backend (backend/src/examples/vendor/)
+ * เปลี่ยน endpoint / ชื่อฟิลด์ที่ไฟล์นี้ + ฝั่ง backend (ไฟล์ vendor ในแต่ละชั้นของ backend/src/examples/)
  * ส่งข้อมูลทุกอย่างใน body — ไม่ใส่ id ใน URL
  */
 import { api, type PageResult } from '../../api/client';

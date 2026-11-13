@@ -4,14 +4,14 @@
 
 | Spring Boot | ในโปรเจกต์นี้ | อยู่ที่ไหน |
 |---|---|---|
-| `@RestController` | Controller (Express router) | `examples/vendor/VendorController.ts` |
-| `@Service` | Service | `VendorService.ts` |
-| `JpaRepository` / DAO | Repository (knex query builder) | `VendorRepository.ts` |
-| `@Entity` | Entity (type) | `Vendor.ts` |
-| DTO + `@Valid` | Dto (zod) | `VendorDto.ts` |
-| `@Autowired` / constructor injection | ต่อสายด้วยมือใน `index.ts` (`new Controller(new Service(new Repository()))`) | `examples/vendor/index.ts` |
+| `@RestController` | Controller (Express router) | `examples/controller/vendor/vendor_controller.ts` |
+| `@Service` | Service | `service/vendor/vendor_service.ts` |
+| `JpaRepository` / DAO | Repository (knex query builder) | `repository/vendor/vendor_repository.ts` |
+| `@Entity` | Entity (type) | `entity/vendor/vendor_entity.ts` |
+| DTO + `@Valid` | Dto (zod) | `dto/vendor/vendor_dto.ts` |
+| `@Autowired` / constructor injection | ต่อสายด้วยมือใน `pages/<หน้า>.ts` (`new Controller(new Service(new Repository()))`) | `examples/pages/vendor.ts` |
 | `@ControllerAdvice` | ตัวจัดการ error กลาง | `backend/src/app.ts` |
-| Flyway / Liquibase | Migration (knex) | `VendorMigration.ts` |
+| Flyway / Liquibase | Migration (knex) | `migration/vendor_migration.ts` |
 | `application.yml` | `.env` | ที่โฟลเดอร์นอกสุด |
 | `pom.xml` | `package.json` | |
 | Spring Security | `core/auth.ts` (JWT ใน cookie) + `roles` ของหน้า | |
@@ -21,12 +21,38 @@
 
 ```
 Controller  →  Service  →  Repository  →  ฐานข้อมูล
- (request)     (กติกา)      (query)
+ (request)     (Business Logic)  (query)
 ```
 
 - Controller เรียกได้แค่ Service · Service เรียกได้แค่ Repository · **ห้ามข้ามชั้น**
-- Controller ไม่มีกติกาธุรกิจ (แค่ตรวจ DTO → เรียก Service → ห่อผล) · Repository ไม่มีกติกาธุรกิจ (แค่ query)
-- ข้อผิดพลาดโยนด้วย `throw conflict(...)`, `throw notFound(...)` ได้จากชั้นไหนก็ได้ ตัวจัดการกลางแปลงเป็นคำตอบให้เอง
+- Controller ไม่มี Business Logic (แค่ตรวจ DTO → เรียก Service → ห่อผล) · Repository ไม่มี Business Logic (แค่ query) · Business Logic อยู่ที่ Service ที่เดียว
+
+## โครงโฟลเดอร์หลังบ้าน (แยกตามชั้นก่อน แล้วแยกตามชื่อหน้า — เหมือน Spring Boot ดั้งเดิม)
+
+```
+backend/src/
+  entity/
+    log/log_entity.ts
+    user/user_entity.ts
+  dto/
+    log/log_dto.ts
+    user/user_dto.ts
+  controller/
+    log/log_controller.ts
+    user/user_controller.ts
+  service/
+    log/log_service.ts
+    user/user_service.ts
+  repository/
+    log/log_repository.ts
+    user/user_repository.ts
+  migration/user_migration.ts
+  pages/
+    log.ts  user.ts          ประกอบ Repository -> Service -> Controller + ลงทะเบียนหน้า
+    index.ts                 รายชื่อหน้าทั้งหมด
+```
+
+ไฟล์ชื่อ `<หน้า>_<layer>.ts` · ชื่อ class ในไฟล์ยังเป็น PascalCase (`LogController`) · หน้าที่ไม่ใช้บางชั้น (เช่น `connection` ไม่มีฐานข้อมูล) ไม่ต้องสร้างไฟล์ของชั้นนั้น
 
 ## ต่างจาก Java ตรงไหน (ที่ควรรู้)
 

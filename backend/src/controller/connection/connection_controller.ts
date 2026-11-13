@@ -1,10 +1,10 @@
 /**
- * ConnectionController.ts — หน้า "สถานะการเชื่อมต่อ" (อ่านอย่างเดียว) มี API เดียว
+ * connection_controller.ts — หน้า "สถานะการเชื่อมต่อ" (อ่านอย่างเดียว) มี API เดียว
  *   POST /api/connection/status   (ไม่มีข้อมูลใน body)
  */
 import { Router, type Request, type Response } from 'express';
 import { ok } from '../../core/http';
-import type { ConnectionService } from './ConnectionService';
+import type { ConnectionService } from '../../service/connection/connection_service';
 
 export class ConnectionController {
   readonly router = Router();

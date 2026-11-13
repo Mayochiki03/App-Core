@@ -16,16 +16,17 @@
 **ห้ามลอก `examples/` ทั้งโฟลเดอร์ ห้ามลอกหน้าที่โปรเจกต์ใหม่ไม่ได้ใช้ (เช่น vendor ถ้าระบบนี้ไม่มีคู่ค้า)** ลอกต้นแบบที่ใกล้เคียงแค่หน้าเดียว แล้วเปลี่ยนชื่อ/ฟิลด์ให้เป็นของระบบนั้นจริง ๆ
 ก่อนเริ่มโปรเจกต์ใหม่ถามตัวเองว่า "ระบบนี้ต้องใช้อะไรจากชุดนี้บ้าง" แล้วหยิบเฉพาะนั้น ไม่ใช่ "เอามาให้หมดก่อนแล้วค่อยลบ"
 
-1. **สร้างหน้าใหม่จากต้นแบบ อย่าเขียนจากศูนย์ และอย่าลอกทั้งชุด** — หน้า CRUD ใช้ `npm run new:page <ชื่อ> -- --label <ชื่อไทย>` (ก๊อป `examples/vendor` แล้วเปลี่ยนชื่อ + ต่อรายการลงทะเบียนให้) หน้าอ่านอย่างเดียวดูแบบจาก `pages/log` (ดู docs/03)
+1. **สร้างหน้าใหม่จากต้นแบบ อย่าเขียนจากศูนย์ และอย่าลอกทั้งชุด** — หน้า CRUD ใช้ `npm run new:page <ชื่อ> -- --label <ชื่อไทย>` (ก๊อปต้นแบบ vendor ใน `backend/src/examples/` แล้วเปลี่ยนชื่อ + ต่อรายการลงทะเบียนให้) หน้าอ่านอย่างเดียวดูแบบจาก `pages/log` (ดู docs/03)
 2. **โซนเขียว แก้ได้เลย**: `backend/src/pages/*`, `frontend/src/pages/*`, `frontend/src/api/*Api.ts`, `config/routes.tsx`, `config/menu.ts`, `lib/messages.ts`
    รวมถึง `backend/src/roles.ts` + `frontend/src/config/roles.ts` (เพิ่ม role), `backend/src/integrations/index.ts` (เลือกตัวเชื่อมต่อ)
    **โซนแดง ห้ามแก้ถ้าไม่ได้รับอนุญาต**: `backend/src/core/*`, `frontend/src/api/client.ts`, `lib/session.tsx`, `hooks/*`, `components/*`
    `examples/*` คือต้นแบบ: แก้เมื่อปรับรูปแบบมาตรฐานของตัวกลางเท่านั้น (ต้องรัน `npm test` ซึ่งทดสอบต้นแบบด้วย)
    ถ้าต้องแก้โซนแดง ให้อธิบายเหตุผลก่อน และรัน `npm run check` + `npm test`
-3. **หลังบ้านแยกชั้น Controller → Service → Repository** (ห้ามข้ามชั้น, Controller ไม่มีกติกาธุรกิจ, Repository ไม่มีกติกาธุรกิจ) ดู docs/05
+3. **หลังบ้านแยกชั้น Controller → Service → Repository** (ห้ามข้ามชั้น, Controller ไม่มี Business Logic, Repository ไม่มี Business Logic — Business Logic อยู่ที่ Service ที่เดียว) ดู docs/05
+   **หลังบ้านแยกเป็นโฟลเดอร์ตามชั้น (Layer) ก่อน แล้วข้างในแยกตามชื่อหน้า**: `backend/src/{entity,dto,controller,service,repository}/<หน้า>/<หน้า>_<layer>.ts` (เช่น `service/log/log_service.ts`) + `pages/<หน้า>.ts` (ประกอบ Repository → Service → Controller แล้วลงทะเบียนหน้า) + `migration/<หน้า>_migration.ts` (ถ้ามีตาราง) — Entity = หน้าตาข้อมูล/ค่าคงที่ · DTO = ตรวจข้อมูลที่รับเข้าด้วย zod · Controller = รับ request/ส่ง response · Service = Business Logic · Repository = คำสั่งฐานข้อมูล (knex) อย่างเดียว
 4. **ห้ามส่งข้อมูลหรือ id ผ่าน URL (path / query)** — API ทุกตัวเป็น `POST` อ่านจาก `req.body` ตรวจด้วย DTO (zod) และหน้าเว็บเรียกผ่าน `api.post`; หน้าแก้ไขรับ id ผ่าน state ของ router (`navigate(path, { state: { id } })`) ไม่ใช่ `:id` ใน route
 5. **เขียนตรง ๆ อ่านตามได้** — ห้ามสร้าง abstraction ที่ซ่อนการทำงาน (ไม่ใช้ค้นไฟล์อัตโนมัติ, decorator, ตัวสร้างหน้าอัตโนมัติจากการประกาศฟิลด์) ลงทะเบียนหน้าด้วยมือใน `backend/src/pages/index.ts` และ `frontend/src/config/routes.tsx` (1 ฟีเจอร์ = 1 บรรทัด ชี้ไป `XxxPage` ที่ถือ route ย่อยเอง)
-6. **ชื่อฟิลด์เป็น snake_case เดียวกันทุกชั้น** (ฟอร์ม = API = คอลัมน์ฐานข้อมูล) ไม่แปลงชื่อ · ชื่อฟีเจอร์เป็นเอกพจน์ (`vendor`) · ชื่อไฟล์ PascalCase (`VendorTable.tsx`)
+6. **ชื่อฟิลด์เป็น snake_case เดียวกันทุกชั้น** (ฟอร์ม = API = คอลัมน์ฐานข้อมูล) ไม่แปลงชื่อ · ชื่อฟีเจอร์เป็นเอกพจน์ (`vendor`) · ชื่อไฟล์หลังบ้านเป็น `<หน้า>_<layer>.ts` (`service/vendor/vendor_service.ts`) ส่วนไฟล์หน้าเว็บ (React) เป็น PascalCase (`VendorTable.tsx`)
 7. **ฐานข้อมูลต้องสลับได้**: ใช้ knex query builder เท่านั้น ห้าม ENUM, SQL ดิบ, `NOW()` ฯลฯ นอก `core/db.ts` — วันที่-เวลาเก็บเป็น string ISO UTC (`nowIso()`)
 8. **ข้อความที่ผู้ใช้เห็น** เป็นภาษาไทย ข้อความที่ใช้ซ้ำใส่ที่ `lib/messages.ts`
 9. **modal ของหน้าไหนเก็บใน `modal/` ของหน้านั้น**; modal เลือกจากตารางใช้ `components/SelectModal.tsx`

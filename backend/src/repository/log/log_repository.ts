@@ -1,7 +1,7 @@
-/** LogRepository.ts — ค้นบันทึกการใช้งานจากฐานข้อมูล (อ่านอย่างเดียว) */
+/** log_repository.ts — ค้นบันทึกการใช้งานจากฐานข้อมูล (อ่านอย่างเดียว) */
 import { db, orWhereContains, whereContains } from '../../core/db';
 import { paginate, type Paging } from '../../core/http';
-import type { Log } from './Log';
+import type { Log } from '../../entity/log/log_entity';
 
 export class LogRepository {
   search(f: { q: string; page: string; action: string }, paging: Paging) {

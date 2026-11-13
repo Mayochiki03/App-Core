@@ -1,10 +1,10 @@
 /**
- * VendorDto.ts — DTO: ข้อมูลที่ "รับเข้า" จากหน้าจอ พร้อมกติกาตรวจ (เทียบ DTO + @Valid ของ Spring)
+ * vendor_dto.ts — DTO: ข้อมูลที่ "รับเข้า" จากหน้าจอ พร้อมกติกาตรวจ (เทียบ DTO + @Valid ของ Spring)
  * ตรวจไม่ผ่านจะตอบ 400 พร้อมข้อความรายช่อง (หน้าจอขีดแดงช่องนั้นให้เอง)
  */
 import { z } from 'zod';
-import { idField, pagingShape } from '../../core/http';
-import { CATEGORIES } from './Vendor';
+import { idField, pagingShape } from '../../../core/http';
+import { CATEGORIES } from '../../entity/vendor/vendor_entity';
 
 /** ช่องข้อมูลของฟอร์ม (ใช้ร่วมกันทั้งเพิ่มและแก้ไข) */
 const fields = {

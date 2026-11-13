@@ -2,7 +2,7 @@
  * pages/index.ts — รายชื่อ "หน้า" ทั้งหมดของระบบฝั่งหลังบ้าน (เขียนมือ ไม่มีการค้นไฟล์อัตโนมัติ)
  *
  * เพิ่มหน้าใหม่: npm run new:page <ชื่อ>  (สร้างไฟล์ + ต่อบรรทัดที่มี @new-page ด้านล่างให้เอง)
- * หรือทำมือ: ก๊อป src/examples/vendor มาเป็น src/pages/<ชื่อ> แล้ว import + ต่อท้ายรายการ (ดู docs/03)
+ * หรือทำมือ: ก๊อปไฟล์ของ vendor ในแต่ละชั้นใน src/examples/ มาเป็นชื่อหน้าใหม่ แล้ว import + ต่อท้ายรายการ (ดู docs/03)
  */
 import type { PageDef } from '../core/pages';
 import { connectionPage } from './connection';

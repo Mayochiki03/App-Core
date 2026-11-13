@@ -1,5 +1,5 @@
 /**
- * VendorController.ts — ชั้นที่ "รับ request / ส่ง response" (เทียบ @RestController)
+ * vendor_controller.ts — ชั้นที่ "รับ request / ส่ง response" (เทียบ @RestController)
  * ทำแค่: ตรวจข้อมูลด้วย DTO → เรียก Service → ห่อผลด้วย ok()
  *
  * ทุก API เป็น POST และส่งข้อมูลใน body — ไม่ส่ง id หรือข้อมูลใด ๆ ทาง URL (ปลอดภัยกว่า และไม่ติด log ของเซิร์ฟเวอร์)
@@ -10,9 +10,9 @@
  *   POST /api/vendor/delete   { id }
  */
 import { Router, type Request, type Response } from 'express';
-import { ok, parse } from '../../core/http';
-import { vendorIdDto, vendorSaveDto, vendorSearchDto, vendorUpdateDto } from './VendorDto';
-import type { VendorService } from './VendorService';
+import { ok, parse } from '../../../core/http';
+import { vendorIdDto, vendorSaveDto, vendorSearchDto, vendorUpdateDto } from '../../dto/vendor/vendor_dto';
+import type { VendorService } from '../../service/vendor/vendor_service';
 
 export class VendorController {
   readonly router = Router();

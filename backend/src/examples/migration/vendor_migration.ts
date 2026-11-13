@@ -1,5 +1,5 @@
 /**
- * VendorMigration.ts — สร้างตารางของหน้านี้ (รันให้อัตโนมัติ — ดู core/migrate.ts)
+ * vendor_migration.ts — สร้างตารางของหน้านี้ (รันให้อัตโนมัติ — ดู core/migrate.ts)
  * สำคัญ: ใช้ knex schema builder เท่านั้น ห้าม ENUM / SQL ดิบ (เพื่อให้ใช้ได้ทุกฐานข้อมูล)
  */
 import type { Migration } from '../../core/pages';

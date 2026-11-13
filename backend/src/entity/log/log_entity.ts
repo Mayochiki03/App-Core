@@ -1,5 +1,5 @@
 /**
- * Log.ts — Entity: หนึ่งแถวของบันทึกการใช้งาน (ตาราง audit_logs เป็นของแกนกลาง ดู core/migrations.ts)
+ * log_entity.ts — Entity: หนึ่งแถวของบันทึกการใช้งาน (ตาราง audit_logs เป็นของแกนกลาง ดู core/migrations.ts)
  */
 export type Log = {
   id: number;

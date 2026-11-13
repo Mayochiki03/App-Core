@@ -40,18 +40,14 @@ npm run dev
 backend/src/
   core/                      แกน: config, db, datasource (อ่านอย่างเดียว), auth, audit, http, migrate (ปกติไม่ต้องแก้)
   roles.ts                   รายชื่อ role ของระบบ (เพิ่ม role ที่นี่ ไม่ต้องแตะ core/)
-  pages/                     ← ที่ทีมทำงาน: 1 โฟลเดอร์ = 1 หน้า แยกเป็นชั้นแบบ Spring Boot
-    log/  connection/        หน้าของระบบ (บันทึกการใช้งาน, สถานะการเชื่อมต่อ)
-    index.ts                 รายชื่อหน้าทั้งหมด (เขียนมือ)
+  entity/ dto/ controller/ service/ repository/   ← ที่ทีมทำงาน: แยกตามชั้น (Layer) แบบ Spring Boot
+                             ข้างในแยกตามชื่อหน้า เช่น service/log/log_service.ts (ไฟล์ชื่อ <หน้า>_<layer>.ts)
+  migration/                 <หน้า>_migration.ts สร้างตารางของแต่ละหน้า (ถ้ามี)
+  pages/                     <หน้า>.ts ประกอบ Repository -> Service -> Controller + ลงทะเบียนหน้า
+    index.ts                 รายชื่อหน้าทั้งหมด (เขียนมือ) · หน้าของระบบ: log, connection
   integrations/              ตัวเชื่อมต่อกับระบบข้างนอก (llm/ ...) — กติกาใน integrations/README.md
   examples/vendor/           ต้นแบบ CRUD แยกเป็นชั้น (ไม่ได้ลงทะเบียนในระบบ ยังถูกตรวจและทดสอบทุกครั้ง)
-      Vendor.ts              Entity (หน้าตาข้อมูล)
-      VendorDto.ts           ข้อมูลที่รับเข้า + กติกาตรวจ
-      VendorController.ts    รับ request / ส่ง response
-      VendorService.ts       กติกาธุรกิจ
-      VendorRepository.ts    คุยกับฐานข้อมูล
-      VendorMigration.ts     สร้างตาราง
-      index.ts               ประกอบชั้นเข้าด้วยกัน + ลงทะเบียนหน้า
+    (โครงเดียวกับ src/ ด้านบน: <layer>/vendor/vendor_<layer>.ts + migration/ + pages/vendor.ts)
 frontend/src/
   api/                       ไฟล์เรียก API: client.ts (กลาง) + <ชื่อ>Api.ts ของแต่ละหน้า
   components/                ชุด component กลาง: Button, PageCard, Fields, DataTable, Pagination, Popup, SelectModal

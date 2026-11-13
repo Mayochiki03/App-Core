@@ -1,10 +1,10 @@
 /**
- * VendorService.ts — ชั้น "กติกาธุรกิจ" (เทียบ @Service)
+ * vendor_service.ts — ชั้น "Business Logic" (เทียบ @Service)
  * ตัดสินใจว่าทำได้ไหม (เช่น รหัสซ้ำไม่ได้) แล้วค่อยสั่ง Repository — ไม่รู้จัก request/response
  */
-import { conflict, notFound } from '../../core/http';
-import type { VendorRepository } from './VendorRepository';
-import type { VendorSaveDto, VendorSearchDto, VendorUpdateDto } from './VendorDto';
+import { conflict, notFound } from '../../../core/http';
+import type { VendorRepository } from '../../repository/vendor/vendor_repository';
+import type { VendorSaveDto, VendorSearchDto, VendorUpdateDto } from '../../dto/vendor/vendor_dto';
 
 const DUPLICATE_CODE = { code: 'รหัสนี้มีอยู่แล้ว' };
 

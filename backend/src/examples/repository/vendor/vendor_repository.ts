@@ -1,11 +1,11 @@
 /**
- * VendorRepository.ts — ชั้นที่ "คุยกับฐานข้อมูล" เท่านั้น (เทียบ @Repository / JpaRepository)
- * มีแต่ query ไม่มีกติกาธุรกิจ (กติกาอยู่ที่ VendorService)
+ * vendor_repository.ts — ชั้นที่ "คุยกับฐานข้อมูล" เท่านั้น (เทียบ @Repository / JpaRepository)
+ * มีแต่ query ไม่มี Business Logic (กติกาอยู่ที่ VendorService)
  */
-import { db, insertGetId, nowIso, whereContains } from '../../core/db';
-import { paginate, type Paging, type PageResult } from '../../core/http';
-import type { Vendor } from './Vendor';
-import type { VendorSaveDto } from './VendorDto';
+import { db, insertGetId, nowIso, whereContains } from '../../../core/db';
+import { paginate, type Paging, type PageResult } from '../../../core/http';
+import type { Vendor } from '../../entity/vendor/vendor_entity';
+import type { VendorSaveDto } from '../../dto/vendor/vendor_dto';
 
 export class VendorRepository {
   /** รายการแบ่งหน้า + กรอง (q = ค้นจากรหัส/ชื่อ) */

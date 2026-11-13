@@ -1,4 +1,4 @@
-/** LogDto.ts — ข้อมูลที่รับเข้าของหน้าบันทึกการใช้งาน (POST /api/log/search) */
+/** log_dto.ts — ข้อมูลที่รับเข้าของหน้าบันทึกการใช้งาน (POST /api/log/search) */
 import { z } from 'zod';
 import { pagingShape } from '../../core/http';
 

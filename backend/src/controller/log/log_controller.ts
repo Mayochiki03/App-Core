@@ -1,11 +1,11 @@
 /**
- * LogController.ts — ตัวอย่างหน้า "อ่านอย่างเดียว" (ดูบันทึกการใช้งาน) มี API เดียว
+ * log_controller.ts — ตัวอย่างหน้า "อ่านอย่างเดียว" (ดูบันทึกการใช้งาน) มี API เดียว
  *   POST /api/log/search   { q, page, action, pageNo, pageSize }
  */
 import { Router, type Request, type Response } from 'express';
 import { ok, parse } from '../../core/http';
-import { logSearchDto } from './LogDto';
-import type { LogService } from './LogService';
+import { logSearchDto } from '../../dto/log/log_dto';
+import type { LogService } from '../../service/log/log_service';
 
 export class LogController {
   readonly router = Router();

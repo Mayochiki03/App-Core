@@ -1,8 +1,8 @@
 /**
  * core/pages.ts — "หน้า" (page) ของระบบฝั่งหลังบ้าน
  *
- * 1 หน้า = 1 โฟลเดอร์ใน src/pages/<ชื่อ>/  ประกอบด้วย
- *   index.ts  → definePage({ name, roles, router, migrations })
+ * 1 หน้า = ไฟล์ src/pages/<ชื่อ>.ts  → definePage({ name, roles, router, migrations })
+ * (ส่วน Controller/Service/Repository/Entity/DTO อยู่ในโฟลเดอร์ของแต่ละชั้น: src/<layer>/<ชื่อ>/<ชื่อ>_<layer>.ts)
  *
  * แล้วเอาไปต่อรายชื่อใน src/pages/index.ts (เขียนมือ — เปิดไฟล์นั้นดูก็รู้ว่าระบบมีหน้าอะไรบ้าง)
  * API ของหน้าจะอยู่ที่  /api/<name>/...  โดยอัตโนมัติ และถูกบันทึก audit log ให้เอง

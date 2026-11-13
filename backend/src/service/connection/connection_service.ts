@@ -1,6 +1,6 @@
 /**
- * ConnectionService.ts — รันการตรวจของตัวเชื่อมต่อทุกตัว (integrations/index.ts) พร้อมกัน
- * แต่ละตัวมีเวลาจำกัด ตัวไหนค้างไม่ทำให้ทั้งหน้าค้าง · ไม่มีกติกาธุรกิจอื่น และไม่แตะฐานข้อมูลของระบบ
+ * connection_service.ts — รันการตรวจของตัวเชื่อมต่อทุกตัว (integrations/index.ts) พร้อมกัน
+ * แต่ละตัวมีเวลาจำกัด ตัวไหนค้างไม่ทำให้ทั้งหน้าค้าง · ไม่มี Business Logic อื่น และไม่แตะฐานข้อมูลของระบบ
  */
 import { allIntegrations } from '../../integrations';
 import type { IntegrationStatus } from '../../integrations/Integration';
