@@ -107,6 +107,8 @@ export async function pingDatasource(name: string): Promise<{ ok: boolean; detai
     const code = e.code ?? e.errors?.[0]?.code ?? '';
     if (!s) return { ok: false, detail: e.message ?? 'ตั้งค่าไม่ครบ' };
     if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT' || code === 'ENOTFOUND') return { ok: false, detail: `ต่อไม่ได้ (${s.host}:${s.port}) — ตรวจ ${prefixOf(name)}HOST/PORT และว่าเครื่องนี้เข้าถึงได้` };
+    // รหัสผ่านผิดบน MariaDB ที่เปิด plugin gssapi/อื่น ๆ: เซิร์ฟเวอร์ขอวิธียืนยันตัวตนที่ไดรเวอร์ไม่รู้จัก แทนที่จะตอบ "รหัสผ่านผิด"
+    if (code === 'AUTH_SWITCH_PLUGIN_ERROR') return { ok: false, detail: `ฐานข้อมูลปฏิเสธ user ${s.user} (เซิร์ฟเวอร์ขอวิธียืนยันตัวตนที่ระบบไม่รองรับ มักเกิดจากรหัสผ่านผิด) — ตรวจ ${prefixOf(name)}USER/PASSWORD` };
     if (code === 'ER_ACCESS_DENIED_ERROR' || code === '28P01') return { ok: false, detail: `ฐานข้อมูลปฏิเสธ user ${s.user} — ตรวจ ${prefixOf(name)}USER/PASSWORD` };
     if (code === 'ER_BAD_DB_ERROR' || code === 'ER_DBACCESS_DENIED_ERROR' || code === '3D000') return { ok: false, detail: `ไม่พบฐานข้อมูล ${s.database} หรือ user นี้ไม่มีสิทธิ์ใช้` };
     return { ok: false, detail: e.message ?? 'ต่อไม่สำเร็จ' };
