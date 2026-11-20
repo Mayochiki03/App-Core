@@ -28,6 +28,12 @@ export type PageDef = {
   roles?: Role[];
   router: Router;
   migrations?: Migration[];
+  /**
+   * ตัวเลือก audit log ของหน้านี้ (ปกติไม่ต้องใส่) — ใช้กับหน้าที่มีข้อมูลส่วนบุคคล เช่น ข้อมูลผู้ป่วย
+   *   redact:    ชื่อฟิลด์ที่ห้ามเก็บค่าลง audit log เช่น ['hn', 'full_name'] (ตรวจทุกระดับของ body ไม่สนตัวพิมพ์เล็กใหญ่)
+   *   logSearch: true = บันทึกการค้นหา/ดูรายการด้วยว่า "ใครเปิดดู" (โดยไม่เก็บค่าที่ค้น) — ปกติ /search ไม่ถูกบันทึก
+   */
+  audit?: { redact?: string[]; logSearch?: boolean };
 };
 
 export const definePage = (page: PageDef): PageDef => page;

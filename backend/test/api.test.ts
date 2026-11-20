@@ -16,7 +16,14 @@ import { after, before, describe, it } from 'node:test';
 // หน้าตัวอย่าง (src/examples) ไม่ได้ลงทะเบียนในระบบ — เทสต์เพิ่มเข้ามาชั่วคราวเพื่อพิสูจน์ว่าต้นแบบยังใช้ได้จริง
 const { useExtraPages } = await import('../src/core/registry');
 const { vendorPage } = await import('../src/examples/pages/vendor');
-useExtraPages([vendorPage]);
+const { definePage } = await import('../src/core/pages');
+const express = (await import('express')).default;
+// หน้าสมมติที่ตั้ง audit (ปิดบังค่า + บันทึกการค้นหา) เพื่อทดสอบ definePage({ audit })
+const secretRouter = express.Router();
+secretRouter.post('/search', (_req, res) => res.json({ status: 'SUCCESS', data: { resultList: [] } }));
+secretRouter.post('/add', (_req, res) => res.json({ status: 'SUCCESS', data: {} }));
+const secretPage = definePage({ name: 'secretpage', roles: ['ADMIN'], router: secretRouter, audit: { redact: ['hn', 'FullName'], logSearch: true } });
+useExtraPages([vendorPage, secretPage]);
 
 const { createApp } = await import('../src/app');
 const { ensureAdmin } = await import('../src/core/auth');
@@ -144,6 +151,24 @@ describe('audit อัตโนมัติ', () => {
     const login = await db('audit_logs').where({ page: 'auth', action: 'LOGIN' });
     assert.ok(login.length >= 2);
     assert.ok(!JSON.stringify(rows).includes(config.admin.password));
+  });
+
+  it('definePage({ audit }): ปิดบังฟิลด์ที่สั่ง (ทุกระดับ ไม่สนตัวพิมพ์) และบันทึกการค้นหาโดยไม่เก็บค่าที่ค้น', async () => {
+    await call('POST', '/secretpage/add', { hn: '0001234', fullname: 'สมชาย', patient: { HN: '0001234', FULLNAME: 'x' }, note: 'ok' });
+    await call('POST', '/secretpage/search', { hn: '0009999' });
+    await new Promise((r) => setTimeout(r, 100));
+    const rows = await db('audit_logs').where({ page: 'secretpage' }).orderBy('id');
+    const text = JSON.stringify(rows);
+    assert.equal(rows.length, 2);
+    assert.ok(!text.includes('0001234') && !text.includes('0009999') && !text.includes('สมชาย'));
+    assert.ok(text.includes('ok')); // ฟิลด์อื่นยังเก็บตามปกติ
+    assert.ok(rows.some((r) => r.action === 'SEARCH'));
+  });
+
+  it('/api/health ไม่ต้องล็อกอิน และบอกเวอร์ชัน', async () => {
+    const r = await call('GET', '/health', undefined, false);
+    assert.equal(r.http, 200);
+    assert.equal(r.data.version, config.version);
   });
 
   it('หน้า log อ่านได้ (ADMIN) และกรองตามหน้า/การกระทำได้', async () => {

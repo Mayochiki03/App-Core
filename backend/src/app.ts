@@ -21,7 +21,8 @@ export function createApp() {
   const api = express.Router();
   api.use(auditMiddleware);
 
-  api.get('/health', (_req, res) => res.json(ok({ time: new Date().toISOString() })));
+  // ตรวจสุขภาพ (ไม่ต้องล็อกอิน ไม่มีข้อมูลผู้ใช้) — เป็น GET ข้อเดียวที่ยกเว้นกฎ POST-only เพราะเครื่องมือ deploy/pm2 เรียกแบบ GET
+  api.get('/health', (_req, res) => res.json(ok({ time: new Date().toISOString(), version: config.version })));
   // ข้อมูลที่หน้าเว็บต้องรู้ก่อนล็อกอิน (ชื่อระบบ + ธีม)
   api.get('/app', (_req, res) => res.json(ok({ name: config.appName, theme: config.theme })));
   api.use('/auth', authRouter);

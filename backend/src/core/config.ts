@@ -21,6 +21,15 @@ export function env(key: string, fallback: string): string {
   return v === undefined || v === '' ? fallback : v;
 }
 
+/** อ่านเลขเวอร์ชันจาก package.json ที่ราก (อ่านไม่ได้ = 'unknown' ไม่ทำให้ระบบล้ม) */
+function appVersion(): string {
+  try {
+    return (JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')) as { version?: string }).version ?? 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
 export type DbClient = 'mariadb' | 'mysql' | 'postgres';
 
 const DB_CLIENTS: Record<string, DbClient> = {
@@ -58,6 +67,13 @@ export const config = {
     password: env('DB_PASSWORD', DEFAULT_DB_PASSWORD),
     database: env('DB_NAME', 'app_core'),
   },
+
+  /** เวอร์ชันของระบบ (อ่านจาก package.json ที่ราก) — แสดงที่ /api/health ให้ CI/CD ตรวจว่า deploy ถูกเวอร์ชัน */
+  version: appVersion(),
+
+  /** กุญแจเข้ารหัสข้อมูลที่ต้องถอดกลับได้ (core/crypto.ts) และกุญแจรหัสแทนสำหรับค้นหา — ไม่ตั้ง = ใช้ฟังก์ชันเข้ารหัสไม่ได้บน production */
+  dataEncKey: env('DATA_ENC_KEY', ''),
+  hashKey: env('HASH_KEY', ''),
 
   jwtSecret: env('JWT_SECRET', 'dev-only-secret-change-me'),
   jwtHours: Number(env('JWT_HOURS', '12')),

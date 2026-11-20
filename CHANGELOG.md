@@ -3,6 +3,26 @@
 รูปแบบ: ใหม่สุดอยู่บนสุด · เวอร์ชันแบบ MAJOR.MINOR.PATCH (เพิ่มความสามารถ = MINOR, แก้บั๊ก = PATCH, เปลี่ยนจนโค้ดเดิมต้องแก้ตาม = MAJOR)
 ทุกครั้งที่ส่งมอบรอบใหม่ให้เพิ่มหัวข้อที่นี่ พร้อมสิ่งที่ผู้ใช้ต้องทำตาม (เช่น migrate, แก้ .env)
 
+## [1.5.0] 2026-11-20
+เป้าหมาย: ให้ App-Core พร้อมทำงานร่วมกับ Backend Core และ Deploy Console (CI/CD) ตั้งแต่ก่อนเริ่มโปรเจกต์จริง (เช่น บสต.น้อย) — รวมเป็นเวอร์ชันเดียว ไม่เปลี่ยนโครงโฟลเดอร์เดิม
+### เพิ่ม
+- **ตัวเชื่อมต่อ Backend Core** `backend/src/integrations/core_gateway/` (`CORE_URL`, `CORE_CLIENT_ID`, `CORE_CLIENT_SECRET`, `CORE_MODE`, `CORE_TIMEOUT_SEC`): ขอ/ต่ออายุ token เอง, retry เฉพาะ 429/503/5xx/timeout (ไม่ retry 400/401/403 และโควตารายวันหมด), `status()` ขอ token อย่างเดียวไม่นับโควตาค้นหา, โหมดจำลอง; ลงทะเบียนในหน้าสถานะการเชื่อมต่อแล้ว (ไม่ตั้ง `CORE_URL` = ปิด)
+- **`core/crypto.ts`**: `encryptText`/`decryptText` (AES-256-GCM) และ `blindIndex` (HMAC-SHA256 ไว้ค้นโดยไม่เก็บค่าจริง) ด้วยกุญแจ `DATA_ENC_KEY` และ `HASH_KEY` แยกกัน; production ไม่ตั้ง/สั้นกว่า 32 ตัว = error ภาษาไทย; `npm run setup` สุ่มให้
+- **audit log ปิดบังข้อมูลส่วนบุคคลได้**: `definePage({ audit: { redact: ['hn', ...], logSearch: true } })` — redact ทุกระดับของ body ไม่สนตัวพิมพ์ และ `logSearch` จดว่าใครค้น/เปิดดู โดยไม่เก็บค่าที่ค้น
+- **`npm run lint`** (ESLint flat config + กันการใช้ `Math.random()`), `sonar-project.properties`, `.gitattributes` (LF) — ชุดเดียวกับที่ Deploy Console ตรวจ
+- **`GET /api/health`** บอกเวอร์ชัน (`config.version` อ่านจาก package.json) — ข้อยกเว้นเดียวของกฎ POST-only
+- **`npm run new:project <ชื่อ>`**: ก๊อปชุดไปโปรเจกต์ใหม่ + git init + commit แรก + `.app-core-base.json` · **`npm run kit:diff -- <โฟลเดอร์ App-Core ใหม่>`**: เทียบไฟล์แกน (อ่านอย่างเดียว)
+- เอกสารใหม่: `docs/07-ต่อกับ-backend-core.md`, `docs/08-เตรียมพร้อมส่งเข้า-cicd.md`, `docs/09-เริ่มโปรเจกต์ใหม่และอัปเดตจาก-app-core.md`
+- เทสต์ใหม่ 12 ข้อ (crypto, ตัวเชื่อม Core ด้วยเซิร์ฟเวอร์จำลอง, audit redact, health)
+### เปลี่ยน
+- **`AGENTS.md` แบ่งสองระดับ**: "ห้ามเด็ดขาด" (ความปลอดภัยข้อมูลผู้ป่วย, ไม่ส่งข้อมูลทาง URL, ไม่ log HN/ชื่อ, ไม่เรียก Backend Core จากเบราว์เซอร์, ห้ามต่อฐานข้อมูลโรงพยาบาลตรงโดยไม่ผ่านตัวกลาง, ชั้น/โซนแดง, ค่าลับใน .env) กับ "ค่าตั้งต้นที่ปรับได้ถ้ามีเหตุผล" (การตั้งชื่อ หน้าตา โครงหน้า) + หัวข้อกฎโค้ดที่ SonarQube จับบ่อย (regex backtrack, `Math.random()`, promise ไม่ await)
+### ไม่ได้ใส่ในรอบนี้
+- ชุด e2e (Playwright) — ต้องรู้ค่าตั้ง e2e ของ Deploy Console และดาวน์โหลดเบราว์เซอร์ ทำเมื่อมีโปรเจกต์จริงที่ต้องใช้
+### ต้องทำตาม
+- [ ] `npm install` (เพิ่ม eslint และปลั๊กอินที่ใช้ตอน lint) แล้วรัน `npm run check && npm run lint && npm test`
+- [ ] โปรเจกต์ที่ก๊อปไปแล้ว: ใส่ `DATA_ENC_KEY` / `HASH_KEY` ใน `.env` เฉพาะเมื่อใช้ `core/crypto` · ตั้ง `CORE_*` เฉพาะเมื่อใช้ Backend Core · ไม่ต้อง migrate
+- [ ] ใน Deploy Console ตั้งฐานข้อมูลเทสต์ของโปรเจกต์แยกกัน (ดู docs/08)
+
 ## [1.4.1] 2026-11-18
 ### แก้
 - `pingDatasource`: ถ้า MariaDB ตอบกลับด้วยวิธียืนยันตัวตนที่ไดรเวอร์ไม่รู้จัก (`auth_gssapi_client` — เกิดตอนรหัสผ่านผิดบนบางเซิร์ฟเวอร์) ระบบแสดงข้อความภาษาไทยว่า "ฐานข้อมูลปฏิเสธ user ..." เหมือนกรณีรหัสผ่านผิดปกติ แทนข้อความภาษาอังกฤษของไดรเวอร์ — ทำให้ชุดทดสอบ `pingDatasource` ผ่านบน MariaDB ของทีมด้วย

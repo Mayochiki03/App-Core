@@ -28,6 +28,7 @@ integrations/<ชื่อ>/
 | ตัว | ใช้ทำอะไร |
 |---|---|
 | `llm/` | คุย LLM แบบ OpenAI-compatible (Ollama, LM Studio, vLLM) |
+| `core_gateway/` | ขอข้อมูลโรงพยาบาลจาก Backend Core (token อัตโนมัติ, retry, โควตา) — ดู docs/07 |
 | `core/datasource.ts` (แหล่งข้อมูลอ่านอย่างเดียว) | ต่อฐานข้อมูลของระบบอื่น เช่น HOSxP — `readonlyDb('hosxp')` |
 
-LINE / MOPH Notify / Core Backend ยังไม่อยู่ในตัวกลาง — เพิ่มเมื่อมีระบบที่ใช้จริง โดยทำตามรูปแบบเดียวกับ `llm/`
+LINE / MOPH Notify ยังไม่อยู่ในตัวกลาง — เพิ่มเมื่อมีระบบที่ใช้จริง โดยทำตามรูปแบบเดียวกับ `llm/`

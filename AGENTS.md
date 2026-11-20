@@ -8,35 +8,53 @@
 
 | ชนิด | อยู่ที่ไหน | ทำอย่างไร |
 |---|---|---|
-| **แกน** (ทุกระบบต้องมี) | `backend/src/core/`, `backend/src/app.ts`, `frontend/src/{api/client.ts,components,hooks,lib}`, หน้า Login/Home/Forbidden/NotFound, หน้า `log` และ `connection` (ของระบบ), `database/`, `scripts/` | เก็บไว้ ไม่ต้องลอกซ้ำ ไม่แก้ถ้าไม่ได้รับอนุญาต |
+| **แกน** (ทุกระบบต้องมี) | `backend/src/core/`, `backend/src/app.ts`, `frontend/src/{api/client.ts,components,hooks,lib}`, หน้า Login/Home/Forbidden/NotFound, หน้า `log` และ `connection` (ของระบบ), `database/`, `scripts/` | เก็บไว้ ไม่ต้องลอกซ้ำ ไม่แก้ถ้าไม่ได้รับอนุญาต (รวม `core/crypto.ts` เข้ารหัสข้อมูลส่วนบุคคล) |
 | **ตัวอย่าง** (ไว้ลอกรูปแบบ) | `backend/src/examples/*`, `frontend/src/examples/*` (ตอนนี้: `vendor`) | **ไม่ลงทะเบียนในระบบ** — สร้างหน้าใหม่จากมันด้วย `npm run new:page <ชื่อ> -- --label <ชื่อไทย>` |
-| **ตัวเชื่อมต่อ** (ติดต่อระบบข้างนอก: LLM, LINE, MOPH, Core Backend, ฐานข้อมูลภายนอก) | `backend/src/integrations/*`, `core/datasource.ts` | ใช้เฉพาะตัวที่โปรเจกต์ต้องใช้จริง — ดู `backend/src/integrations/README.md` |
+| **ตัวเชื่อมต่อ** (ติดต่อระบบข้างนอก: LLM, LINE, MOPH, Core Backend, ฐานข้อมูลภายนอก) | `backend/src/integrations/*` (มี `llm/`, `core_gateway/`), `core/datasource.ts` | ใช้เฉพาะตัวที่โปรเจกต์ต้องใช้จริง — ดู `backend/src/integrations/README.md` |
 | **ของโปรเจกต์** (ที่ทีมเขียนเอง) | `backend/src/pages/*`, `frontend/src/pages/*`, `frontend/src/api/*Api.ts`, `roles.ts` | แก้ได้เลย |
 
 **ห้ามลอก `examples/` ทั้งโฟลเดอร์ ห้ามลอกหน้าที่โปรเจกต์ใหม่ไม่ได้ใช้ (เช่น vendor ถ้าระบบนี้ไม่มีคู่ค้า)** ลอกต้นแบบที่ใกล้เคียงแค่หน้าเดียว แล้วเปลี่ยนชื่อ/ฟิลด์ให้เป็นของระบบนั้นจริง ๆ
 ก่อนเริ่มโปรเจกต์ใหม่ถามตัวเองว่า "ระบบนี้ต้องใช้อะไรจากชุดนี้บ้าง" แล้วหยิบเฉพาะนั้น ไม่ใช่ "เอามาให้หมดก่อนแล้วค่อยลบ"
 
-1. **สร้างหน้าใหม่จากต้นแบบ อย่าเขียนจากศูนย์ และอย่าลอกทั้งชุด** — หน้า CRUD ใช้ `npm run new:page <ชื่อ> -- --label <ชื่อไทย>` (ก๊อปต้นแบบ vendor ใน `backend/src/examples/` แล้วเปลี่ยนชื่อ + ต่อรายการลงทะเบียนให้) หน้าอ่านอย่างเดียวดูแบบจาก `pages/log` (ดู docs/03)
-2. **โซนเขียว แก้ได้เลย**: `backend/src/pages/*`, `frontend/src/pages/*`, `frontend/src/api/*Api.ts`, `config/routes.tsx`, `config/menu.ts`, `lib/messages.ts`
-   รวมถึง `backend/src/roles.ts` + `frontend/src/config/roles.ts` (เพิ่ม role), `backend/src/integrations/index.ts` (เลือกตัวเชื่อมต่อ)
-   **โซนแดง ห้ามแก้ถ้าไม่ได้รับอนุญาต**: `backend/src/core/*`, `frontend/src/api/client.ts`, `lib/session.tsx`, `hooks/*`, `components/*`
-   `examples/*` คือต้นแบบ: แก้เมื่อปรับรูปแบบมาตรฐานของตัวกลางเท่านั้น (ต้องรัน `npm test` ซึ่งทดสอบต้นแบบด้วย)
-   ถ้าต้องแก้โซนแดง ให้อธิบายเหตุผลก่อน และรัน `npm run check` + `npm test`
-3. **หลังบ้านแยกชั้น Controller → Service → Repository** (ห้ามข้ามชั้น, Controller ไม่มี Business Logic, Repository ไม่มี Business Logic — Business Logic อยู่ที่ Service ที่เดียว) ดู docs/05
-   **หลังบ้านแยกเป็นโฟลเดอร์ตามชั้น (Layer) ก่อน แล้วข้างในแยกตามชื่อหน้า**: `backend/src/{entity,dto,controller,service,repository}/<หน้า>/<หน้า>_<layer>.ts` (เช่น `service/log/log_service.ts`) + `pages/<หน้า>.ts` (ประกอบ Repository → Service → Controller แล้วลงทะเบียนหน้า) + `migration/<หน้า>_migration.ts` (ถ้ามีตาราง) — Entity = หน้าตาข้อมูล/ค่าคงที่ · DTO = ตรวจข้อมูลที่รับเข้าด้วย zod · Controller = รับ request/ส่ง response · Service = Business Logic · Repository = คำสั่งฐานข้อมูล (knex) อย่างเดียว
-4. **ห้ามส่งข้อมูลหรือ id ผ่าน URL (path / query)** — API ทุกตัวเป็น `POST` อ่านจาก `req.body` ตรวจด้วย DTO (zod) และหน้าเว็บเรียกผ่าน `api.post`; หน้าแก้ไขรับ id ผ่าน state ของ router (`navigate(path, { state: { id } })`) ไม่ใช่ `:id` ใน route
-5. **เขียนตรง ๆ อ่านตามได้** — ห้ามสร้าง abstraction ที่ซ่อนการทำงาน (ไม่ใช้ค้นไฟล์อัตโนมัติ, decorator, ตัวสร้างหน้าอัตโนมัติจากการประกาศฟิลด์) ลงทะเบียนหน้าด้วยมือใน `backend/src/pages/index.ts` และ `frontend/src/config/routes.tsx` (1 ฟีเจอร์ = 1 บรรทัด ชี้ไป `XxxPage` ที่ถือ route ย่อยเอง)
-6. **ชื่อฟิลด์เป็น snake_case เดียวกันทุกชั้น** (ฟอร์ม = API = คอลัมน์ฐานข้อมูล) ไม่แปลงชื่อ · ชื่อฟีเจอร์เป็นเอกพจน์ (`vendor`) · ชื่อไฟล์หลังบ้านเป็น `<หน้า>_<layer>.ts` (`service/vendor/vendor_service.ts`) ส่วนไฟล์หน้าเว็บ (React) เป็น PascalCase (`VendorTable.tsx`)
-7. **ฐานข้อมูลต้องสลับได้**: ใช้ knex query builder เท่านั้น ห้าม ENUM, SQL ดิบ, `NOW()` ฯลฯ นอก `core/db.ts` — วันที่-เวลาเก็บเป็น string ISO UTC (`nowIso()`)
-8. **ข้อความที่ผู้ใช้เห็น** เป็นภาษาไทย ข้อความที่ใช้ซ้ำใส่ที่ `lib/messages.ts`
-9. **modal ของหน้าไหนเก็บใน `modal/` ของหน้านั้น**; modal เลือกจากตารางใช้ `components/SelectModal.tsx`
-10. **TypeScript strict**: ห้ามใช้ `any` ยกเว้นจำเป็นจริง ๆ (ใส่คอมเมนต์เหตุผล) — ก่อนส่งงานรัน `npm run check` และ `npm test` ให้ผ่าน
-11. **อย่าส่งข้อมูลผู้ใช้/ประวัติจากหน้าจอ** — `created_by`, ชื่อผู้ทำรายการ ฯลฯ มาจาก session ฝั่งเซิร์ฟเวอร์ (`req.user`) และ audit log บันทึกให้อัตโนมัติ
-12. ทุกไฟล์ใหม่ใส่คอมเมนต์หัวไฟล์ภาษาไทย บอกว่าไฟล์นี้ทำอะไร ใช้ยังไง
-13. **ก่อนบันทึก/ลบ ต้องมี popup ถามยืนยันเสมอ** (`popup.confirm`) และฟอร์มต้องมี `onKeyDown={noEnterSubmit}` — กัน Enter ในช่องกรอกทำให้บันทึกทั้งที่ยังพิมพ์ไม่เสร็จ (ดู `VendorAdd.tsx`)
-14. **ต้องใช้ได้บนมือถือ (360px)**: คอลัมน์ตารางที่ไม่สำคัญซ่อนด้วย `className: 'hidden md:table-cell'` แต่คอลัมน์ "จัดการ" ห้ามซ่อน; label ของช่องกรอกต้องผูกกับช่อง (ใช้ `TextField` / `FilterInput` ฯลฯ ที่ผูกให้แล้ว)
-15. **ห้ามใช้อีโมจิ** ในหน้าเว็บ โค้ด คอมเมนต์ และเอกสาร — ใช้ไอคอนเส้น (lucide-react) หรือข้อความธรรมดา (เตือนด้วยคำว่า "สำคัญ:" / "ระวัง:"); หน้าตาต้องดูเป็นงานมืออาชีพ ไม่ตกแต่งเกินจำเป็น
-16. **อัปเดต `CHANGELOG.md` ทุกครั้งที่ส่งมอบรอบใหม่** (ใส่เวอร์ชัน วันที่ สิ่งที่เพิ่ม/แก้/เปลี่ยน และสิ่งที่ผู้ใช้ต้องทำตาม)
-17. **ตัวเชื่อมต่อ (integrations) ต้องมีรูปแบบเดียวกัน**: 1 ตัว = 1 โฟลเดอร์ใน `backend/src/integrations/<ชื่อ>/` ตามแบบ `llm/` — มีโหมด `real | fake | off` (`<NAME>_MODE`), ตัวตรวจสถานะ `status()` ที่ไม่ส่งข้อความหาคนจริง, ค่าลับอยู่ใน `.env` เท่านั้น, ข้อความ error เป็นภาษาไทย แกน (`core/`) ห้าม import ตัวเชื่อมต่อ (ทิศทาง: หน้า → ตัวเชื่อมต่อ → แกน)
-18. **ฐานข้อมูลของคนอื่น (เช่น HOSxP) ใช้ `readonlyDb('<ชื่อ>')` เท่านั้น** (`core/datasource.ts`) — อ่านอย่างเดียว ไม่มี migration ห้ามสร้าง/แก้ตารางในนั้น ห้ามใช้ `db` หลักไปต่อฐานข้อมูลนั้น
-19. **role เพิ่มที่ `backend/src/roles.ts` และ `frontend/src/config/roles.ts`** (ต้องตรงกัน และต้องมี `ADMIN`) ไม่ต้องแตะ `core/`
+## ระดับที่ 1 — ห้ามเด็ดขาด (เกี่ยวกับความปลอดภัยข้อมูลผู้ป่วยและโครงที่ระบบอื่นพึ่งพา)
+
+ข้อเหล่านี้ไม่มีข้อยกเว้นเพราะ "สะดวกกว่า" — ถ้าเห็นว่าจำเป็นต้องฝ่า ให้หยุดและถามเจ้าของโปรเจกต์ก่อน
+
+- **A1. ห้ามส่งข้อมูลหรือ id ผ่าน URL (path / query)** — API ทุกตัวเป็น `POST` อ่านจาก `req.body` ตรวจด้วย DTO (zod) หน้าเว็บเรียกผ่าน `api.post`; หน้าแก้ไขรับ id ผ่าน state ของ router ไม่ใช่ `:id` ใน route (ข้อยกเว้นเดียว: `GET /api/health` ไม่มีข้อมูลใด ๆ)
+- **A2. ห้ามเขียน HN / ชื่อผู้ป่วย / เลขบัตร ลง log, console, audit log, ข้อความ error** — หน้าที่มีข้อมูลผู้ป่วยตั้ง `definePage({ audit: { redact: ['hn', ...], logSearch: true } })` (ดู `core/pages.ts`)
+- **A3. ห้ามเรียก Backend Core (หรือระบบอื่น) จากเบราว์เซอร์** — เรียกจาก Service ฝั่งเซิร์ฟเวอร์ผ่าน `integrations/core_gateway` เท่านั้น ค่าลับ (`CORE_CLIENT_SECRET`, token) ห้ามถึงหน้าเว็บ
+- **A4. ห้ามต่อฐานข้อมูลกลางของโรงพยาบาล (HOSxP ฯลฯ) ตรง ๆ** — ข้อมูลโรงพยาบาลต้องผ่าน Backend Core เท่านั้น (`readonlyDb` ไว้ต่อฐานข้อมูลของระบบอื่นที่ได้รับอนุญาตเฉพาะกรณี ไม่ใช่ทางลัดไปหาฐานข้อมูลโรงพยาบาล)
+- **A5. ข้อมูลส่วนบุคคลที่ต้องเก็บในฐานข้อมูลของโปรเจกต์เอง ต้องเข้ารหัสด้วย `core/crypto.ts`** (`encryptText` เก็บ + `blindIndex` ไว้ค้น) ไม่เก็บเป็นข้อความเปล่า และอย่าเก็บซ้ำถ้าถามจาก Backend Core ได้
+- **A6. ค่าลับทุกชนิดอยู่ใน `.env` เท่านั้น** — ห้ามฝังในโค้ด ห้าม commit `.env` ห้ามส่งไปเบราว์เซอร์ ห้ามใส่ในเอกสาร/ตัวอย่าง
+- **A7. ลำดับชั้น Controller → Service → Repository ห้ามข้ามชั้น** (Controller ไม่มี Business Logic, Repository ไม่มี Business Logic — อยู่ที่ Service ที่เดียว) ดู docs/05
+- **A8. ห้ามแก้ `backend/src/core/*`, `frontend/src/api/client.ts`, `lib/session.tsx`, `hooks/*`, `components/*` (โซนแดง) ถ้าไม่ได้รับอนุญาต** — ต้องแก้ให้อธิบายเหตุผลก่อน และรัน `npm run check` + `npm test` (โปรเจกต์ที่ก๊อปจาก App-Core ถ้าแก้แกน จะอัปเดตจาก App-Core รุ่นใหม่ยากขึ้น — เจอปัญหาของแกนให้แจ้งไปแก้ที่ App-Core)
+- **A9. ก่อนบันทึก/ลบ ต้องมี popup ถามยืนยัน** (`popup.confirm`) และฟอร์มต้องมี `onKeyDown={noEnterSubmit}` (ดู `VendorAdd.tsx`)
+- **A10. ก่อนส่งงานต้องผ่าน `npm run check`, `npm run lint`, `npm test`** (Deploy Console ตรวจชุดเดียวกัน) และอัปเดต `CHANGELOG.md` พร้อมระบุสิ่งที่ผู้ใช้ "ต้องทำตาม"
+
+## ระดับที่ 2 — ค่าตั้งต้นที่ปรับได้ ถ้ามีเหตุผลและบอกเหตุผลไว้ (ในโค้ด/CHANGELOG)
+
+เป็นมาตรฐานเพื่อให้อ่านง่ายและสลับคนทำงานได้ ไม่ใช่ข้อบังคับ — โปรเจกต์ที่ลักษณะงานต่างจากตัวอย่าง (เช่น ฟอร์มประเมินยาว ๆ ที่ไม่ใช่ตาราง CRUD) ปรับให้เหมาะได้ แต่ต้องไม่ขัดระดับที่ 1
+
+1. **สร้างหน้าใหม่จากต้นแบบที่ใกล้เคียง อย่าเขียนจากศูนย์ และอย่าลอกทั้งชุด** — `npm run new:page <ชื่อ> -- --label <ชื่อไทย>` หน้าอ่านอย่างเดียวดูแบบจาก `pages/log` (ดู docs/03)
+2. **โซนเขียว แก้ได้เลย**: `backend/src/pages/*`, `frontend/src/pages/*`, `frontend/src/api/*Api.ts`, `config/routes.tsx`, `config/menu.ts`, `lib/messages.ts`, `roles.ts` (2 ที่), `integrations/index.ts` · `examples/*` แก้เมื่อปรับรูปแบบมาตรฐานเท่านั้น
+3. **หลังบ้านแยกโฟลเดอร์ตามชั้นก่อน แล้วข้างในแยกตามชื่อหน้า**: `backend/src/{entity,dto,controller,service,repository}/<หน้า>/<หน้า>_<layer>.ts` + `pages/<หน้า>.ts` (ประกอบชั้นแล้วลงทะเบียน) + `migration/<หน้า>_migration.ts` — Entity = หน้าตาข้อมูล · DTO = ตรวจข้อมูลเข้าด้วย zod · Controller = รับ/ส่ง · Service = Business Logic · Repository = คำสั่ง knex
+4. **เขียนตรง ๆ อ่านตามได้** — ไม่ใช้ค้นไฟล์อัตโนมัติ/decorator/ตัวสร้างหน้าอัตโนมัติ ลงทะเบียนหน้าด้วยมือที่ `backend/src/pages/index.ts` และ `frontend/src/config/routes.tsx`
+5. **ชื่อฟิลด์ snake_case เดียวกันทุกชั้น** (ฟอร์ม = API = คอลัมน์) · ชื่อฟีเจอร์เป็นเอกพจน์ · ไฟล์หลังบ้าน `<หน้า>_<layer>.ts` · ไฟล์ React เป็น PascalCase
+6. **ฐานข้อมูลสลับได้**: knex query builder เท่านั้น ไม่ใช้ ENUM, SQL ดิบ, `NOW()` นอก `core/db.ts` — วันเวลาเป็น string ISO UTC (`nowIso()`)
+7. ข้อความที่ผู้ใช้เห็นเป็นภาษาไทย (ข้อความใช้ซ้ำที่ `lib/messages.ts`) · modal เก็บใน `modal/` ของหน้านั้น (เลือกจากตารางใช้ `components/SelectModal.tsx`)
+8. TypeScript strict: ไม่ใช้ `any` เว้นจำเป็นจริง (ใส่คอมเมนต์เหตุผล)
+9. `created_by`/ชื่อผู้ทำรายการมาจาก session ฝั่งเซิร์ฟเวอร์ (`req.user`) ไม่รับจากหน้าจอ · audit log บันทึกให้อัตโนมัติ
+10. ทุกไฟล์ใหม่ใส่คอมเมนต์หัวไฟล์ภาษาไทยบอกว่าทำอะไร ใช้ยังไง
+11. ใช้ได้บนมือถือ (360px): คอลัมน์ไม่สำคัญซ่อนด้วย `hidden md:table-cell` แต่คอลัมน์ "จัดการ" ห้ามซ่อน; label ผูกกับช่องกรอก
+12. ไม่ใช้อีโมจิในหน้าเว็บ โค้ด คอมเมนต์ เอกสาร — ใช้ไอคอนเส้น (lucide-react) หรือข้อความ ("สำคัญ:" / "ระวัง:")
+13. ตัวเชื่อมต่อ (integrations): 1 ตัว = 1 โฟลเดอร์ตามแบบ `llm/` / `core_gateway/` — โหมด `real | fake | off`, `status()` ที่ไม่ส่งข้อความหาคนจริง, error ภาษาไทย, แกนไม่ import ตัวเชื่อมต่อ
+14. role เพิ่มที่ `backend/src/roles.ts` และ `frontend/src/config/roles.ts` (ต้องตรงกัน มี `ADMIN`)
+15. ฐานข้อมูลทดสอบของโปรเจกต์ต้องแยกจากของโปรเจกต์อื่น (`TEST_DB_NAME`, ชื่อลงท้าย `_test`) — เทสต์ลบทุกตาราง (ดู docs/08)
+
+## กฎโค้ดที่ SonarQube จับบ่อย (เขียนให้ถูกตั้งแต่แรก จะไม่ต้องกลับมาแก้ตอนผ่าน CI)
+
+- **regex ที่อาจ backtrack หนัก (S5852)**: หลีกเลี่ยงรูปแบบซ้อน เช่น `(a+)+`, `.*.*`, `\s*\S*\s*` — ตัดข้อความด้วยฟังก์ชัน (`trim`, `slice`, วนอ่านทีละตัว) แทนที่จะเขียน regex ยาว (ตัวอย่างตัด `/` ท้าย URL ดู `CoreGatewayClient.ts`)
+- **`Math.random()` (S2245)**: ห้ามใช้สร้างรหัส/token/ค่าลับ — ใช้ `crypto.randomBytes` / `crypto.randomInt` (ESLint จะเตือนให้)
+- **Promise ที่ไม่ await**: `navigate()` ของ react-router และฟังก์ชัน async ที่ไม่รอผล ให้ใส่ `void` นำหน้า (`void navigate('/x')`) หรือ `await`
+- ไม่ปล่อยตัวแปร/import ที่ไม่ใช้ · ไม่ใส่โค้ดที่ถูกคอมเมนต์ทิ้งไว้ · ฟังก์ชันที่ซ้อน if/for ลึกเกิน ~4 ชั้นให้แยกเป็นฟังก์ชันย่อย
+- ห้ามมีรหัสผ่าน/token ในโค้ดและเอกสาร (gitleaks ใน CI จะจับ) แม้เป็นตัวอย่าง — ใช้ค่าสมมุติที่ชัดเจนว่าไม่จริง เช่น `<ใส่รหัสผ่าน>`

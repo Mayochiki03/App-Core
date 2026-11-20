@@ -72,6 +72,9 @@ frontend/src/
 | [docs/04-typescript-ที่ต้องรู้.md](docs/04-typescript-ที่ต้องรู้.md) | TS ที่ต้องรู้ในโปรเจกต์นี้ (5 เรื่อง) |
 | [docs/05-เทียบกับ-spring-boot.md](docs/05-เทียบกับ-spring-boot.md) | สำหรับคนมาจาก Spring Boot: อะไรตรงกับอะไร |
 | [docs/06-ตัวเชื่อมต่อและฐานข้อมูลภายนอก.md](docs/06-ตัวเชื่อมต่อและฐานข้อมูลภายนอก.md) | ต่อ LLM / LINE / ฐานข้อมูลของระบบอื่น (HOSxP) แบบอ่านอย่างเดียว |
+| [docs/07-ต่อกับ-backend-core.md](docs/07-ต่อกับ-backend-core.md) | ขอข้อมูลโรงพยาบาลผ่าน Backend Core + เข้ารหัสข้อมูลผู้ป่วยที่เก็บเอง |
+| [docs/08-เตรียมพร้อมส่งเข้า-cicd.md](docs/08-เตรียมพร้อมส่งเข้า-cicd.md) | เช็กลิสต์ให้ผ่าน Deploy Console (lint, Sonar, ฐานข้อมูลเทสต์ต่อโปรเจกต์) |
+| [docs/09-เริ่มโปรเจกต์ใหม่และอัปเดตจาก-app-core.md](docs/09-เริ่มโปรเจกต์ใหม่และอัปเดตจาก-app-core.md) | `npm run new:project`, `npm run kit:diff` |
 
 ## คำสั่งที่ใช้บ่อย
 

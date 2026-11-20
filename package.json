@@ -1,11 +1,16 @@
 {
   "name": "app-core-kit",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "description": "ตัวกลาง (starter kit) สำหรับเว็บภายในองค์กร — TypeScript + React + Tailwind + Express (MariaDB / MySQL / PostgreSQL)",
-  "workspaces": ["backend", "frontend"],
-  "engines": { "node": ">=22.9" },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22.9"
+  },
   "scripts": {
     "setup": "node scripts/setup.mjs",
     "new:page": "node scripts/new-page.mjs",
@@ -17,9 +22,16 @@
     "migrate": "npm run db -w backend -- migrate",
     "migrate:status": "npm run db -w backend -- status",
     "db:reset": "npm run db -w backend -- reset",
-    "seed": "npm run db -w backend -- seed"
+    "seed": "npm run db -w backend -- seed",
+    "lint": "eslint .",
+    "new:project": "node scripts/new-project.mjs",
+    "kit:diff": "node scripts/kit-diff.mjs"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.14.0",
+    "typescript-eslint": "^8.72.2"
   }
 }

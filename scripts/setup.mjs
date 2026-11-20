@@ -13,6 +13,11 @@ if (fs.existsSync(target)) {
 }
 
 const secret = crypto.randomBytes(32).toString('hex');
-const text = fs.readFileSync(path.join(root, '.env.example'), 'utf8').replace('# JWT_SECRET=', `JWT_SECRET=${secret} #`);
+const rand = () => crypto.randomBytes(32).toString('hex');
+const text = fs
+  .readFileSync(path.join(root, '.env.example'), 'utf8')
+  .replace('# JWT_SECRET=', `JWT_SECRET=${secret} #`)
+  .replace('# DATA_ENC_KEY=', `DATA_ENC_KEY=${rand()} #`)
+  .replace('# HASH_KEY=', `HASH_KEY=${rand()} #`);
 fs.writeFileSync(target, text);
-console.log('สร้าง .env แล้ว (สุ่ม JWT_SECRET ให้เรียบร้อย)\nแก้ค่าในไฟล์นั้นได้ตามต้องการ แล้วรัน: npm run dev');
+console.log('สร้าง .env แล้ว (สุ่ม JWT_SECRET / DATA_ENC_KEY / HASH_KEY ให้เรียบร้อย)\nแก้ค่าในไฟล์นั้นได้ตามต้องการ แล้วรัน: npm run dev');
