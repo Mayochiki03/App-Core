@@ -10,7 +10,7 @@ import { CATEGORIES } from '../../entity/vendor/vendor_entity';
 const fields = {
   code: z.string().trim().min(1, 'กรุณากรอกรหัส').max(30, 'รหัสยาวเกิน 30 ตัวอักษร'),
   name: z.string().trim().min(1, 'กรุณากรอกชื่อ').max(150, 'ชื่อยาวเกิน 150 ตัวอักษร'),
-  category: z.enum(CATEGORIES, { errorMap: () => ({ message: 'กรุณาเลือกประเภท' }) }),
+  category: z.enum(CATEGORIES, { message: 'กรุณาเลือกประเภท' }),
   email: z.union([z.literal(''), z.string().trim().email('อีเมลไม่ถูกต้อง')]).default(''),
   is_active: z.enum(['Y', 'N']).default('Y'),
   note: z.string().trim().max(500, 'หมายเหตุยาวเกิน 500 ตัวอักษร').default(''),

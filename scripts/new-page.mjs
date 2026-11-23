@@ -13,7 +13,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// APP_CORE_ROOT ใช้ในเทสต์เท่านั้น (ชี้ไปโฟลเดอร์โปรเจกต์ชั่วคราว) — ปกติไม่ต้องตั้ง
+const ROOT = process.env.APP_CORE_ROOT ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const die = (msg) => {
   console.error(`\nสร้างหน้าไม่สำเร็จ: ${msg}\n`);
   process.exit(1);

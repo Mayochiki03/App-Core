@@ -1,5 +1,5 @@
 /**
- * ทดสอบสคริปต์ npm run new:project และ npm run kit:diff (รันเป็นโปรเซสจริงในโฟลเดอร์ชั่วคราว ไม่ต้องใช้ฐานข้อมูล)
+ * ทดสอบสคริปต์ npm run new:project, kit:diff, new:page และ setup (รันเป็นโปรเซสจริงในโฟลเดอร์ชั่วคราว ไม่ต้องใช้ฐานข้อมูล)
  */
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
@@ -12,6 +12,8 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'appcore-scripts-'));
 const run = (script: string, ...args: string[]) => spawnSync(process.execPath, [path.join(root, 'scripts', script), ...args], { encoding: 'utf8' });
+/** รันสคริปต์ของ repo นี้ แต่ให้ทำงานกับโฟลเดอร์โปรเจกต์ชั่วคราว (APP_CORE_ROOT) ไม่แตะไฟล์จริง */
+const runIn = (dir: string, script: string, ...args: string[]) => spawnSync(process.execPath, [path.join(root, 'scripts', script), ...args], { encoding: 'utf8', env: { ...process.env, APP_CORE_ROOT: dir } });
 
 after(() => fs.rmSync(tmp, { recursive: true, force: true }));
 
@@ -71,5 +73,67 @@ describe('npm run kit:diff', () => {
     assert.match(r.stdout, /backend\/src\/core\/http\.ts/);
     assert.match(r.stdout, /backend\/src\/core\/extra_only_here\.ts/);
     assert.match(r.stdout, /backend\/src\/core\/crypto\.ts/);
+  });
+});
+
+describe('npm run new:page', () => {
+  const proj = path.join(tmp, 'page_proj');
+  const read = (rel: string) => fs.readFileSync(path.join(proj, rel), 'utf8');
+
+  it('เตรียมโปรเจกต์ชั่วคราว', () => {
+    assert.equal(run('new-project.mjs', 'page_proj', proj).status, 0);
+  });
+
+  it('ชื่อ/ตัวเลือกไม่ถูกต้อง → ปฏิเสธและไม่สร้างไฟล์', () => {
+    assert.match(runIn(proj, 'new-page.mjs').stderr, /ต้องระบุชื่อหน้า/);
+    assert.match(runIn(proj, 'new-page.mjs', 'Bad-Name', '--label', 'x').stderr, /ไม่ถูกต้อง/);
+    assert.match(runIn(proj, 'new-page.mjs', 'log', '--label', 'x').stderr, /ถูกระบบใช้แล้ว/);
+    assert.match(runIn(proj, 'new-page.mjs', 'product', '--label', ' ').stderr, /ว่างไม่ได้/);
+    assert.match(runIn(proj, 'new-page.mjs', 'product', '--label', 'a<b').stderr, /อักขระ/);
+    assert.match(runIn(proj, 'new-page.mjs', 'product', '--label', 'x', '--from', 'nothere').stderr, /ไม่พบต้นแบบ/);
+    assert.ok(!fs.existsSync(path.join(proj, 'backend/src/pages/product.ts')));
+  });
+
+  it('สร้างหน้าใหม่จากต้นแบบ vendor และต่อรายการลงทะเบียนให้', () => {
+    const r = runIn(proj, 'new-page.mjs', 'product', '--label', 'สินค้า');
+    assert.equal(r.status, 0, r.stderr);
+    for (const f of ['backend/src/service/product/product_service.ts', 'backend/src/pages/product.ts', 'backend/src/migration/product_migration.ts', 'frontend/src/api/productApi.ts', 'frontend/src/pages/product/ProductPage.tsx']) assert.ok(fs.existsSync(path.join(proj, f)), f);
+    assert.match(read('backend/src/pages/product.ts'), /name: 'product'/);
+    assert.match(read('backend/src/pages/product.ts'), /from '\.\.\/core\/pages'/); // เลข ../ ของ import แกนถูกลดระดับ
+    assert.match(read('backend/src/service/product/product_service.ts'), /from '\.\.\/\.\.\/core/);
+    assert.match(read('backend/src/pages/index.ts'), /productPage/);
+    assert.match(read('frontend/src/config/routes.tsx'), /\/product\/\*/);
+    assert.match(read('frontend/src/config/menu.ts'), /label: 'สินค้า'/);
+    assert.ok(!/vendor/i.test(read('backend/src/service/product/product_service.ts')));
+  });
+
+  it('มีหน้านั้นอยู่แล้ว → ไม่เขียนทับ', () => {
+    const r = runIn(proj, 'new-page.mjs', 'product', '--label', 'สินค้า');
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /มีอยู่แล้ว/);
+  });
+
+  it('ไม่พบเครื่องหมายลงทะเบียน → หยุดก่อนสร้างไฟล์ครึ่งๆ กลางๆ', () => {
+    fs.writeFileSync(path.join(proj, 'frontend/src/config/menu.ts'), '// ไม่มีเครื่องหมาย\n');
+    const r = runIn(proj, 'new-page.mjs', 'queue', '--label', 'คิว');
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /ไม่พบเครื่องหมาย/);
+    assert.ok(!fs.existsSync(path.join(proj, 'backend/src/pages/queue.ts')));
+  });
+});
+
+describe('npm run setup', () => {
+  const proj = path.join(tmp, 'setup_proj');
+
+  it('สร้าง .env พร้อมสุ่มกุญแจ และไม่ทับของเดิม', () => {
+    fs.mkdirSync(proj, { recursive: true });
+    fs.copyFileSync(path.join(root, '.env.example'), path.join(proj, '.env.example'));
+    const r = runIn(proj, 'setup.mjs');
+    assert.equal(r.status, 0, r.stderr);
+    const env = fs.readFileSync(path.join(proj, '.env'), 'utf8');
+    for (const k of ['JWT_SECRET', 'DATA_ENC_KEY', 'HASH_KEY']) assert.match(env, new RegExp(`^${k}=[0-9a-f]{64} #`, 'm'));
+    const again = runIn(proj, 'setup.mjs');
+    assert.match(again.stdout, /มีไฟล์ .env อยู่แล้ว/);
+    assert.equal(fs.readFileSync(path.join(proj, '.env'), 'utf8'), env);
   });
 });

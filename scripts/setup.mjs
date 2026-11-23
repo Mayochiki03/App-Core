@@ -4,7 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// APP_CORE_ROOT ใช้ในเทสต์เท่านั้น — ปกติไม่ต้องตั้ง
+const root = process.env.APP_CORE_ROOT ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const target = path.join(root, '.env');
 
 if (fs.existsSync(target)) {
