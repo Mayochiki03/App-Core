@@ -1,6 +1,6 @@
 {
   "name": "app-core-kit",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "type": "module",
   "description": "ตัวกลาง (starter kit) สำหรับเว็บภายในองค์กร — TypeScript + React + Tailwind + Express (MariaDB / MySQL / PostgreSQL)",
@@ -19,6 +19,7 @@
     "start": "npm run start -w backend",
     "check": "npm run check -w backend && npm run check -w frontend",
     "test": "npm test -w backend",
+    "test:coverage": "npm run test:coverage -w backend",
     "migrate": "npm run db -w backend -- migrate",
     "migrate:status": "npm run db -w backend -- status",
     "db:reset": "npm run db -w backend -- reset",

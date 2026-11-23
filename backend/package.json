@@ -1,6 +1,6 @@
 {
   "name": "app-core-kit-backend",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,8 @@
     "start": "tsx src/server.ts",
     "db": "tsx src/cli.ts",
     "check": "tsc --noEmit",
-    "test": "tsx --test test/*.test.ts"
+    "test": "tsx --test test/*.test.ts",
+    "test:coverage": "tsx --test --test-concurrency=1 --experimental-test-coverage --test-coverage-exclude=test/** --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info test/*.test.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

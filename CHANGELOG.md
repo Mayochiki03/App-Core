@@ -3,6 +3,19 @@
 รูปแบบ: ใหม่สุดอยู่บนสุด · เวอร์ชันแบบ MAJOR.MINOR.PATCH (เพิ่มความสามารถ = MINOR, แก้บั๊ก = PATCH, เปลี่ยนจนโค้ดเดิมต้องแก้ตาม = MAJOR)
 ทุกครั้งที่ส่งมอบรอบใหม่ให้เพิ่มหัวข้อที่นี่ พร้อมสิ่งที่ผู้ใช้ต้องทำตาม (เช่น migrate, แก้ .env)
 
+## [1.5.2] 2026-11-23
+เป้าหมาย: ให้ SonarQube quality gate ใน Deploy Console ผ่าน (รอบ #111: coverage โค้ดใหม่ 0% และ issue ใหม่ 3 ข้อ)
+### เพิ่ม
+- `npm run test:coverage` (backend) — รันเทสต์พร้อมวัด coverage แล้วเขียน `backend/lcov.info` ให้ Console ส่งต่อ SonarQube (ไม่มีสคริปต์นี้ = coverage เป็น 0%)
+- เทสต์ใหม่ `backend/test/scripts.test.ts` ครอบคลุม `new:project` และ `kit:diff`
+### แก้
+- `scripts/kit-diff.mjs`: `sort()` ใช้ `localeCompare` · `CoreGatewayClient.ts`: `Number.NaN` แทน `NaN`
+- `scripts/new-project.mjs`: **ไม่เรียก `git` เองแล้ว** (Sonar S4036 เรื่อง PATH) — พิมพ์คำสั่ง `git init && git add -A && git commit ...` ให้คัดลอกไปรันเอง
+- `sonar-project.properties`: ชี้ไฟล์ coverage เป็น `backend/lcov.info`
+### ต้องทำตาม
+- [ ] ไม่ต้อง migrate · ไม่ต้องแก้ `.env`
+- [ ] ใช้ `npm run new:project` แล้วต้องรันคำสั่ง git ที่สคริปต์พิมพ์ให้เอง
+
 ## [1.5.1] 2026-11-23
 ### แก้ (ข้อที่ SonarQube รายงานจากรอบ Quality check ก่อนหน้า)
 - `core/datasource.ts`: `sort()` ใช้ `localeCompare` · `LlmClient.ts`: ตัด `/` ท้าย URL ด้วยลูปแทน regex (เลี่ยง backtracking) · `Layout.tsx`: พื้นหลังปิดเมนูมือถือเป็น `<button>` จริง (เข้าถึงด้วยคีย์บอร์ดได้)

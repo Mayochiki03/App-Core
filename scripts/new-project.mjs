@@ -1,7 +1,6 @@
 // สร้างโปรเจกต์ใหม่จาก App-Core  —  รัน: npm run new:project <ชื่อโปรเจกต์> [โฟลเดอร์ปลายทาง]
-// ก๊อปทั้งชุดไปโฟลเดอร์ใหม่ (ไม่เอา .git, node_modules, dist, .env, ไฟล์ database/ ที่ไม่ใช่ตั้งต้น) แล้ว git init + commit แรก
+// ก๊อปทั้งชุดไปโฟลเดอร์ใหม่ (ไม่เอา .git, node_modules, dist, .env, ไฟล์ database/ ที่ไม่ใช่ตั้งต้น) แล้วบอกคำสั่ง git init ให้รันต่อ (ไม่เรียก git เอง)
 // ประวัติ git ของโปรเจกต์ใหม่เริ่มใหม่หมด (ไม่ใช่ branch ของ App-Core) — ไฟล์ .app-core-base.json จดว่าเริ่มจากเวอร์ชันไหน เอาไว้ให้ npm run kit:diff เทียบ
-import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -44,14 +43,5 @@ for (const f of ['package.json', 'backend/package.json', 'frontend/package.json'
   fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
 }
 
-const git = (...args) => execFileSync('git', args, { cwd: dest, stdio: 'inherit' });
-try {
-  git('init', '-q');
-  git('add', '-A');
-  git('-c', 'user.name=dev', '-c', 'user.email=dev@localhost', 'commit', '-q', '-m', `เริ่มโปรเจกต์ ${name} จาก App-Core v${base}`);
-} catch {
-  console.warn('git init ไม่สำเร็จ (ไม่มี git?) — ไฟล์ถูกก๊อปแล้ว ทำ git init เองได้');
-}
-
-console.log(`\nสร้างโปรเจกต์ ${name} แล้วที่ ${dest} (เริ่มจาก App-Core v${base})\nขั้นต่อไป: cd ${dest} && npm install && npm run setup && npm run check\nต้องแก้ DB_NAME/TEST_DB_NAME ให้เป็นของโปรเจกต์นี้ — ดู docs/08-เริ่มโปรเจกต์ใหม่และอัปเดตจาก-app-core.md\n`);
+console.log(`\nสร้างโปรเจกต์ ${name} แล้วที่ ${dest} (เริ่มจาก App-Core v${base})\nขั้นต่อไป (ประวัติ git เริ่มใหม่): cd ${dest} && git init && git add -A && git commit -m "เริ่มโปรเจกต์ ${name} จาก App-Core v${base}" && npm install && npm run setup && npm run check\nต้องแก้ DB_NAME/TEST_DB_NAME ให้เป็นของโปรเจกต์นี้ — ดู docs/09-เริ่มโปรเจกต์ใหม่และอัปเดตจาก-app-core.md\n`);
 console.log('หมายเหตุ: package-lock.json ถูกก๊อปมาด้วย (ชื่อ package ใน lock อาจยังเป็นของ App-Core — npm install จะแก้ให้)');

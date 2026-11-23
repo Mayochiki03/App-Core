@@ -18,3 +18,7 @@ database/*
 *.sqlite
 *.sqlite3
 *.db
+
+# ผลวัด coverage
+coverage/
+lcov.info

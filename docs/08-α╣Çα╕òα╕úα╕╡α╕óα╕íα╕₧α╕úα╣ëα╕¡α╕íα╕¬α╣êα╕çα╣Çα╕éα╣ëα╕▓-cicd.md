@@ -8,6 +8,7 @@ Deploy Console ตรวจโปรเจกต์ตามขั้นตอ�
 - [ ] สคริปต์ที่ราก: `check`, `lint`, `test`, `build` (App-Core มีครบ)
 - [ ] มี `eslint.config.js` และ `sonar-project.properties` (App-Core มีให้ — ไม่ใส่ project key/host/token ไว้ในไฟล์ Console ส่งมาเอง)
 - [ ] มี `.gitattributes` (กัน CRLF/LF ทำให้ diff เต็มไปหมดบน Windows)
+- [ ] backend มีสคริปต์ `test:coverage` (เขียน `backend/lcov.info`) — Console รันให้ก่อนสแกน SonarQube; ไม่มี = coverage 0% และเกณฑ์ "โค้ดใหม่ ≥ 80%" ไม่ผ่าน
 - [ ] `GET /api/health` ตอบ 200 พร้อม `version` (ใช้เช็กหลัง deploy ว่าขึ้นเวอร์ชันถูก)
 - [ ] ไม่มีรหัสผ่าน/token ในโค้ด (gitleaks จับ) · `.env` ไม่ขึ้น git
 - [ ] `npm run check && npm run lint && npm test` ผ่านในเครื่องก่อนติด tag

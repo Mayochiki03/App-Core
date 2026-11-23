@@ -31,7 +31,7 @@ console.log(`โปรเจกต์นี้เริ่มจาก App-Core 
 
 const mine = files(root);
 const theirs = files(other);
-const all = [...new Set([...mine, ...theirs])].sort();
+const all = [...new Set([...mine, ...theirs])].sort((a, b) => a.localeCompare(b));
 const changed = [], added = [], removed = [];
 for (const f of all) {
   const a = hash(path.join(root, f));

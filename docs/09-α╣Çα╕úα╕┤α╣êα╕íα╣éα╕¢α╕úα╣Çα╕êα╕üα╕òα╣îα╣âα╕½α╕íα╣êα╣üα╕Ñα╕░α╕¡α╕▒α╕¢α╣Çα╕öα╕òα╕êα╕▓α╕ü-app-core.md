@@ -8,7 +8,7 @@ App-Core คือ "มาตรฐานโครงสร้าง" — โป
 git clone https://github.com/Mayochiki03/App-Core.git && cd App-Core && npm install && npm run new:project bst_noi
 ```
 
-สคริปต์ก๊อปทั้งชุดไปโฟลเดอร์ข้าง ๆ (`../bst_noi`) โดยไม่เอา `.git`, `node_modules`, `dist`, `.env` แล้ว `git init` + commit แรก พร้อมไฟล์ `.app-core-base.json` จดว่าเริ่มจากเวอร์ชันไหน (ระบุโฟลเดอร์เองได้: `npm run new:project bst_noi D:\work\bst_noi`)
+สคริปต์ก๊อปทั้งชุดไปโฟลเดอร์ข้าง ๆ (`../bst_noi`) โดยไม่เอา `.git`, `node_modules`, `dist`, `.env` พร้อมไฟล์ `.app-core-base.json` จดว่าเริ่มจากเวอร์ชันไหน (ระบุโฟลเดอร์เองได้: `npm run new:project bst_noi D:\work\bst_noi`) แล้วพิมพ์คำสั่ง `git init && git add -A && git commit ...` ให้รันต่อ (สคริปต์ไม่เรียก git เอง)
 
 จากนั้นในโปรเจกต์ใหม่:
 1. `npm install && npm run setup` (สร้าง `.env` สุ่มกุญแจให้)

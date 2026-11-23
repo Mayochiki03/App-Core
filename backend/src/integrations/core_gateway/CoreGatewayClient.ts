@@ -150,6 +150,6 @@ function isRetryable(err: unknown): boolean {
 }
 
 function retryAfterMs(err: unknown): number {
-  const v = err instanceof CoreGatewayError ? Number(err.retryAfter) : NaN;
+  const v = err instanceof CoreGatewayError ? Number(err.retryAfter) : Number.NaN;
   return Number.isFinite(v) ? v * 1000 : 0;
 }
