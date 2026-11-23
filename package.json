@@ -1,6 +1,6 @@
 {
   "name": "app-core-kit",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "private": true,
   "type": "module",
   "description": "ตัวกลาง (starter kit) สำหรับเว็บภายในองค์กร — TypeScript + React + Tailwind + Express (MariaDB / MySQL / PostgreSQL)",
