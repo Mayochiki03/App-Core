@@ -20,7 +20,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
       {drawer && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
+          <button type="button" aria-label="ปิดเมนู" className="absolute inset-0 h-full w-full cursor-default bg-black/40" onClick={() => setDrawer(false)} />
           <aside className="absolute inset-y-0 left-0 w-64 bg-card shadow-xl">
             <Sidebar onNavigate={() => setDrawer(false)} />
           </aside>

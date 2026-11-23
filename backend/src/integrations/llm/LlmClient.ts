@@ -14,7 +14,13 @@ import { fakeLog, integrationMode } from '../mode';
 
 export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
-const baseUrl = () => env('LLM_BASE_URL', '').replace(/\/+$/, '');
+/** ตัด / ที่ท้าย URL (ไม่ใช้ regex เพื่อเลี่ยง backtracking ที่ Sonar เตือน) */
+const baseUrl = () => {
+  const url = env('LLM_BASE_URL', '');
+  let end = url.length;
+  while (end > 0 && url.charAt(end - 1) === '/') end--;
+  return url.slice(0, end);
+};
 
 export class LlmClient {
   private get mode() {

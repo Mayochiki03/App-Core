@@ -29,7 +29,7 @@ export function datasourcesConfigured(): string[] {
     .filter((k) => /^[A-Z][A-Z0-9_]*_DB_HOST$/.test(k) && process.env[k])
     .map((k) => k.replace(/_DB_HOST$/, '').toLowerCase())
     .filter(isDatasourceName)
-    .sort();
+    .sort((a, b) => a.localeCompare(b));
 }
 
 function settingsOf(name: string) {
